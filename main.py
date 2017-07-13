@@ -1,26 +1,19 @@
-# Copyright 2016 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# Declare our django version so it doesn't whine about it.
+#from google.appengine.dist import use_library
+#use_library('django', '1.2')
 
+# Needed by the main code here
+import logging
 import webapp2
 
+# Bring in the controllers
+import Controllers
 
-class MainPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello, World!')
-
-
-app = webapp2.WSGIApplication([
-    ('/', MainPage),
+logging.getLogger().setLevel(logging.DEBUG)
+application = webapp2.WSGIApplication([
+    ('/root/.*', Controllers.Root),
+    ('/character/.*', Controllers.Character),
+    ('/next/.*', Controllers.Next),
+    ('/relations/.*', Controllers.Relations),
+    ('/toys/.*', Controllers.Toys),
 ], debug=True)

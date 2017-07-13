@@ -3,5 +3,26 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /(index\.html)?
+  upload: index.html
+  static_files: index.html
+  login: required
+  secure: always
+
+- url: /css
+  static_dir: css
+  login: required
+  secure: always
+
+- url: /js
+  static_dir: js
+  login: required
+  secure: always
+  
 - url: /.*
-  script: main.app
+  script: main.application
+  login: required
+  secure: always
+
+builtins:
+- remote_api: on
