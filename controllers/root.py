@@ -3,7 +3,7 @@ from google.appengine.ext import webapp
 import logging, json, datetime
 
 import Models
-import Rules
+import rules
 import broadcast, ajax
 
 class Root(ajax.AJAX):
@@ -24,7 +24,7 @@ class Root(ajax.AJAX):
         characters = Models.Characters.all()
         response.update(characters=Models.Characters.read_all(user=user, is_gm=is_gm))
         # Add rankings for the auctions
-        (ranked, spent) = Rules.rankings(settings, characters)
+        (ranked, spent) = rules.rankings(settings, characters)
         response.update(rankings=ranked, spent=spent)
         #logging.debug("rankings are %s" % repr(response['rankings']))
         # Add relations
@@ -57,7 +57,7 @@ class Root(ajax.AJAX):
             message = Models.Settings.find().read()
             # And the ranks in case we switched to one of those modes
             settings.last_update = datetime.datetime.now()
-            (ranked, spent) = Rules.rankings(settings, Models.Characters.all())
+            (ranked, spent) = rules.rankings(settings, Models.Characters.all())
             message.update(rankings=ranked, spent=spent)
             for token in broadcast.get():
                 (user, expires) = token

@@ -3,7 +3,7 @@ from google.appengine.api import users
 import logging
 
 from Settings import Settings
-import Rules
+import rules
 
 QUESTIONS = [
 	"The first time you walked the Pattern, where did you have it send you? Why?",
@@ -110,14 +110,14 @@ class Characters(db.Model):
 						pass
 		elif state == 'attributes' or state == 'powers':
 			bidding = settings.bidding()
-			for (i, auction) in enumerate(Rules.auctions):
+			for (i, auction) in enumerate(rules.auctions):
 				# Updates to closed auctions are silently ignored
 				if settings.strikes[i] < 3:
 					if auction.name in bidding and auction.name in kwargs:
 						old = self.bids_paid[i]
 						try:
 							new = int(kwargs[auction.name])
-							rungs = Rules.rungs(Characters.all())[i]
+							rungs = rules.rungs(Characters.all())[i]
 							#logging.debug("Calling %s's valid on old=%s, new=%s, rungs=%s" % (auction.name, old, new, repr(rungs)))
 							if auction.valid(rungs, old, new):
 								self.bids_pending[i] = new
@@ -130,8 +130,8 @@ class Characters(db.Model):
 		elif state == 'finalTouches':
 			maxBuyup = 0
 			valid = True
-			for (i, auction) in enumerate(Rules.auctions):
-				rungs = Rules.rungs(Characters.all())[i]
+			for (i, auction) in enumerate(rules.auctions):
+				rungs = rules.rungs(Characters.all())[i]
 				if auction.name in kwargs:
 					old = self.bids_paid[i]
 					try:

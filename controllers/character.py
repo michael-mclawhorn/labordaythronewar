@@ -3,7 +3,7 @@ from google.appengine.ext import webapp
 import logging, json
 
 import Models
-import Rules
+import rules
 import broadcast, ajax
 
 class Character(ajax.AJAX):
@@ -19,7 +19,7 @@ class Character(ajax.AJAX):
         # Do the update
         character.write(settings, user, self.is_gm(), **data)
         # Broadcast any needed changes out
-        (ranked, spent) = Rules.rankings(settings, Models.Characters.all())
+        (ranked, spent) = rules.rankings(settings, Models.Characters.all())
         message = { 'spent': spent }
         for token in broadcast.get():
             (buser, expires) = token

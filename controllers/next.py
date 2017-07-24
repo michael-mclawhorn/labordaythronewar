@@ -4,14 +4,14 @@ import logging, json, operator, datetime
 from itertools import izip, count
 
 import Models
-import Rules
+import rules
 import broadcast, ajax
 
 class Next(ajax.AJAX):
     def post(self):
         settings = Models.Settings.find()
         characters = Models.Characters.all()
-        auctions = Rules.auctions
+        auctions = rules.auctions
 
         # Compute the updates, then hold that thought
         updates_by_character = [map(operator.gt, character.bids_pending, character.bids_paid) for character in characters]
@@ -38,7 +38,7 @@ class Next(ajax.AJAX):
 
         # The changes to the war and rankings are public knowledge
         message = settings.read()
-        (ranked, spent) = Rules.rankings(settings, characters)
+        (ranked, spent) = rules.rankings(settings, characters)
         message.update(rankings = ranked, spent = spent)
         #logging.debug("rankings are %s" % repr(response['rankings']))
         for token in broadcast.get():

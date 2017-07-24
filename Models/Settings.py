@@ -3,11 +3,11 @@ from google.appengine.ext import db
 from google.appengine.api import users
 import logging, random
 
-import Rules
+import rules
 
 # Static properties
 STATES = ['addPlayers', 'nameAndRelations', 'attributes', 'powers', 'finalTouches', 'play']
-AUCTIONS = [i.name for i in Rules.auctions]
+AUCTIONS = [i.name for i in rules.auctions]
 
 class Settings(db.Model):
 	"""
