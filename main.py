@@ -7,13 +7,13 @@ import logging
 import webapp2
 
 # Bring in the controllers
-import Controllers
+import controllers
 
 logging.getLogger().setLevel(logging.DEBUG)
 application = webapp2.WSGIApplication([
-    ('/root/.*', Controllers.Root),
-    ('/character/.*', Controllers.Character),
-    ('/next/.*', Controllers.Next),
-    ('/relations/.*', Controllers.Relations),
-    ('/toys/.*', Controllers.Toys),
+    ('/root/.*', controllers.Root),
+    ('/character/.*', controllers.Character),
+    ('/next/.*', controllers.Next),
+    ('/relations/.*', controllers.Relations),
+    ('/toys/.*', controllers.Toys),
 ], debug=True)
