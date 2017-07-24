@@ -51,7 +51,7 @@ class Characters(ReadMixin, ndb.Model):
         if create:
             f = Characters.get_or_insert
         else:
-            f = Characters.get_by_key_name
+            f = Characters.get_by_id
         if key:
             return f(key)
         elif user:
@@ -63,7 +63,7 @@ class Characters(ReadMixin, ndb.Model):
         return True
 
     def email(self):
-        return self.key().name()
+        return self.key.string_id()
 
     def user(self):
         return users.User(self.email())
@@ -71,14 +71,14 @@ class Characters(ReadMixin, ndb.Model):
     def read(self, user=None, is_gm=False):
         settings = Settings.find()
         public = {
-            'key': str(self.key()),
+            'key': self.key.urlsafe(),
             'email': self.email(),
             'name': self.name,
             'updated': self.last_update > settings.last_update,
         }
         if (user and user.email() == self.email()) or is_gm:
             public.update({
-                'questions': [{ 'question': q, 'answer': a } for (q, a) in zip(QUESTIONS, self.questions)],
+                'questions': [{'question': q, 'answer': a} for (q, a) in zip(QUESTIONS, self.questions)],
                 'approved': self.approved,
                 'grudges': self.grudges,
                 'favors': self.favors,

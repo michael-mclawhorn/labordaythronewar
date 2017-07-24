@@ -20,7 +20,7 @@ class Relation(ReadMixin, WriteMixin, ndb.Model):
 
     def read(self):
         return {
-            'key': str(self.key()),
+            'key': self.key.urlsafe(),
             'source': self.source.email(),
             'target': self.target.email(),
             'relation': self.relation,
