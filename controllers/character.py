@@ -13,9 +13,9 @@ class Character(ajax.AJAX):
         data = self.json()
         # Get the character to be updated
         if self.is_gm():
-            character = models.Characters.find(email = data['email'])
+            character = models.Characters.find(email=data['email'])
         else:
-            character = models.Characters.find(user = user)
+            character = models.Characters.find(user=user)
         # Do the update
         character.write(settings, user, self.is_gm(), **data)
         # Broadcast any needed changes out
