@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<!--	<meta name="viewport" content="user-scalable=no, width=device-width" /> -->
-	<link rel="stylesheet" href="css/desktop.css">
-	<link rel="stylesheet" href="css/jquery-ui.css">
-	<title>Labor Day Throne War VIII</title>
-	<script type="text/javascript" src="/_ah/channel/jsapi"></script>
+<!--    <meta name="viewport" content="user-scalable=no, width=device-width" /> -->
+  <link rel="stylesheet" href="css/desktop.css">
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <title>Labor Day Throne War VIII</title>
+  <script type="text/javascript" src="/_ah/channel/jsapi"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.js"></script>
   <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
@@ -19,266 +19,266 @@
 <body>
 
 <script>
-	var Character = function(data) {
-		// Avoiding javascript errors
-		ko.mapping.fromJS({
-			key: null, email: '',
-			name: '', grudges: 0, favors: 0,
-			endurance: 0, endurance_paid: 0, psyche: 0, psyche_paid: 0, strength: 0, strength_paid: 0, warfare: 0, warfare_paid: 0,
-			logrus: 0, logrus_paid: 0, pattern: 0, pattern_paid: 0, shapeshifting: 0, shapeshifting_paid: 0, trump: 0, trump_paid: 0,
-			power_words: 0, power_words_paid: 0, conjuration: 0, conjuration_paid: 0,
-			questions: [{ question: "What is your quest?", answer: "To seek the grail!" }],
-		}, {}, this);
-		this.key = ko.observable(null);
-		this.email = ko.observable('');
-		this.name = ko.observable('');
-		// Basic character data
-		ko.mapping.fromJS(data, {}, this);
-		// Calculated properties
-		this.toSpend = ko.dependentObservable(function() {
-			var given = 150;
-			var rel = 2 * (parseInt(this.grudges()) + parseInt(this.favors()));
-			var qs = 0;
-			ko.utils.arrayForEach(this.questions(), function(q) { if ( q.answer() ) { qs++; } });
-			return given + rel + qs;
-		}, this);
-		this.spent = ko.dependentObservable(function() {
-			if ( this.endurance ) {
-				var attrs = parseInt(this.endurance()) + parseInt(this.psyche()) + parseInt(this.strength()) + parseInt(this.warfare());
-				var majors = parseInt(this.logrus()) + parseInt(this.pattern()) + parseInt(this.shapeshifting()) + parseInt(this.trump());
-				var minors = parseInt(this.power_words()) + parseInt(this.conjuration());
-				return attrs + majors + minors;
-			} else {
-				return 0;
-			}
-		}, this);
-		// Behaviors
-		this.remove = function() { viewModel.characters.destroy(this); };
-		this.save = function() { $.ajax("/character/", { data: ko.mapping.toJSON(this) }); };
-	};
+    var Character = function(data) {
+        // Avoiding javascript errors
+        ko.mapping.fromJS({
+            key: null, email: '',
+            name: '', grudges: 0, favors: 0,
+            endurance: 0, endurance_paid: 0, psyche: 0, psyche_paid: 0, strength: 0, strength_paid: 0, warfare: 0, warfare_paid: 0,
+            logrus: 0, logrus_paid: 0, pattern: 0, pattern_paid: 0, shapeshifting: 0, shapeshifting_paid: 0, trump: 0, trump_paid: 0,
+            power_words: 0, power_words_paid: 0, conjuration: 0, conjuration_paid: 0,
+            questions: [{ question: "What is your quest?", answer: "To seek the grail!" }],
+        }, {}, this);
+        this.key = ko.observable(null);
+        this.email = ko.observable('');
+        this.name = ko.observable('');
+        // Basic character data
+        ko.mapping.fromJS(data, {}, this);
+        // Calculated properties
+        this.toSpend = ko.dependentObservable(function() {
+            var given = 150;
+            var rel = 2 * (parseInt(this.grudges()) + parseInt(this.favors()));
+            var qs = 0;
+            ko.utils.arrayForEach(this.questions(), function(q) { if ( q.answer() ) { qs++; } });
+            return given + rel + qs;
+        }, this);
+        this.spent = ko.dependentObservable(function() {
+            if ( this.endurance ) {
+                var attrs = parseInt(this.endurance()) + parseInt(this.psyche()) + parseInt(this.strength()) + parseInt(this.warfare());
+                var majors = parseInt(this.logrus()) + parseInt(this.pattern()) + parseInt(this.shapeshifting()) + parseInt(this.trump());
+                var minors = parseInt(this.power_words()) + parseInt(this.conjuration());
+                return attrs + majors + minors;
+            } else {
+                return 0;
+            }
+        }, this);
+        // Behaviors
+        this.remove = function() { viewModel.characters.destroy(this); };
+        this.save = function() { $.ajax("/character/", { data: ko.mapping.toJSON(this) }); };
+    };
 
-	var Relation = function(data) {
-		this.key = ko.observable('');
-		this.source = ko.observable('');
-		this.relation = ko.observable('');
-		this.target = ko.observable('');
-		this.reason = ko.observable('');
-		ko.mapping.fromJS(data, {}, this);
-	};
+    var Relation = function(data) {
+        this.key = ko.observable('');
+        this.source = ko.observable('');
+        this.relation = ko.observable('');
+        this.target = ko.observable('');
+        this.reason = ko.observable('');
+        ko.mapping.fromJS(data, {}, this);
+    };
 
-	var Item = function(data) {
-		ko.mapping.fromJS({
-			name: 'unnamed', owner: '', description: '',
-			vitality: 0, aggression: 0, intelligence: 0,
-			movement: 0, psychic_sensitivity: 0, psychic_defense: 0,
-			shadow_movement: 0, shadow_control: 0, shapeshifting: 0, trump_images: 0, power_words: 0,
-			quantity: 1, notes: '',
-		}, {}, this);
-		ko.mapping.fromJS(data, {}, this);
-		this.remove = function() { viewModel.items.remove(this); };
-	};
+    var Item = function(data) {
+        ko.mapping.fromJS({
+            name: 'unnamed', owner: '', description: '',
+            vitality: 0, aggression: 0, intelligence: 0,
+            movement: 0, psychic_sensitivity: 0, psychic_defense: 0,
+            shadow_movement: 0, shadow_control: 0, shapeshifting: 0, trump_images: 0, power_words: 0,
+            quantity: 1, notes: '',
+        }, {}, this);
+        ko.mapping.fromJS(data, {}, this);
+        this.remove = function() { viewModel.items.remove(this); };
+    };
 
-	var Shadow = function(data) {
-		ko.mapping.fromJS({
-			name: 'unnamed', owner: '', description: '',
-			primality: 1, control: 0, barriers: 0,
-			notes: '',
-		}, {}, this);
-		ko.mapping.fromJS(data, {}, this);
-		this.remove = function() { viewModel.shadows.remove(this); };
-	};
-	
-	function load(object) {
-		var mapping = {
-			characters: { create: function(options) { return new Character(options.data); }, },
-			relations: { create: function(options) { return new Relation(options.data); }, },
-			items: { create: function(options) { return new Item(options.data); }, },
-			shadows: { create: function(options) { return new Shadow(options.data); }, },
-		};
-		ko.mapping.fromJS(object, mapping, viewModel);
-	}
-	
-	var viewModel = {
-		// Client information
-		is_gm: ko.observable(true),					// Is the person who's on this browser a GM?
-		logout_url: ko.observable(null),		// We don't have a valid logout URL yet
-		nickname: ko.observable(null),			// What I should be referred to as
-		email: ko.observable(''),						// My email address
-		token: ko.observable(false),				// Token from the server to open a channel on
+    var Shadow = function(data) {
+        ko.mapping.fromJS({
+            name: 'unnamed', owner: '', description: '',
+            primality: 1, control: 0, barriers: 0,
+            notes: '',
+        }, {}, this);
+        ko.mapping.fromJS(data, {}, this);
+        this.remove = function() { viewModel.shadows.remove(this); };
+    };
+    
+    function load(object) {
+        var mapping = {
+            characters: { create: function(options) { return new Character(options.data); }, },
+            relations: { create: function(options) { return new Relation(options.data); }, },
+            items: { create: function(options) { return new Item(options.data); }, },
+            shadows: { create: function(options) { return new Shadow(options.data); }, },
+        };
+        ko.mapping.fromJS(object, mapping, viewModel);
+    }
+    
+    var viewModel = {
+        // Client information
+        is_gm: ko.observable(true),                    // Is the person who's on this browser a GM?
+        logout_url: ko.observable(null),        // We don't have a valid logout URL yet
+        nickname: ko.observable(null),            // What I should be referred to as
+        email: ko.observable(''),                        // My email address
+        token: ko.observable(false),                // Token from the server to open a channel on
 
-		// Read-only thronewar state
-		bidding: ko.observableArray([]),
-		states: ko.observableArray([]),
-		strikes: ko.observableArray([]),
-		// Editable state
-		state: ko.observable(''),
-		points: ko.observable(0),
-		grudges: ko.observable(0),
-		favors: ko.observable(0),
+        // Read-only thronewar state
+        bidding: ko.observableArray([]),
+        states: ko.observableArray([]),
+        strikes: ko.observableArray([]),
+        // Editable state
+        state: ko.observable(''),
+        points: ko.observable(0),
+        grudges: ko.observable(0),
+        favors: ko.observable(0),
 
-		// Character data -- players only operate on myself.
-		characters: ko.observableArray([]),
-		rankings: ko.observableArray([]),
-		spent: ko.observableArray([]),
-		relations: ko.observableArray([]),
-		items: ko.observableArray([]),
-		shadows: ko.observableArray([]),
-		
-		// Player state tracking
-		pages: ['Sheet', 'Buyups', 'Relations', 'Toys'],
-		panel: ko.observable('Sheet'),
-		foo: ko.observable(0),
-		
-		// Behaviors
-		saveSettings: function() {
-			var post = {
-				state: this.state, points: this.points, grudges: this.grudges, favors: this.favors,
-				characters: ko.utils.arrayMap(this.characters(), function(c) { return { email: c.email() }; }),
-				strikes: ko.utils.arrayMap(this.strikes(), function(s) { return s.strikes(); }),
-			}
-			$.ajax("/root/", { data: ko.toJSON(post) })
-		},
-		saveRelations: function() { $.ajax("/relations/", { data: ko.toJSON({ relations: this.relations }) }) },
-		saveToys: function() { $.ajax("/toys/", { data: ko.mapping.toJSON({ email: this.email, items: this.currentItems, shadows: this.currentShadows }) }) },
-		addCharacter: function() { this.characters.push(new Character()); },
-		addItem: function() { this.items.push(new Item({ owner: this.email() })); },
-		addShadow: function() { this.shadows.push(new Shadow({ owner: this.email() })); },
-		nextRound: function() { $.ajax("/next/"); },
-		ranks: function(name) {
-			var tgt = ko.utils.arrayFirst(this.rankings(), function(r) { return r.name() == name; });
-			if (tgt) {
-				return ko.toJS(tgt.ranks);
-			}
-			return [];
-		},
-	};
+        // Character data -- players only operate on myself.
+        characters: ko.observableArray([]),
+        rankings: ko.observableArray([]),
+        spent: ko.observableArray([]),
+        relations: ko.observableArray([]),
+        items: ko.observableArray([]),
+        shadows: ko.observableArray([]),
+        
+        // Player state tracking
+        pages: ['Sheet', 'Buyups', 'Relations', 'Toys'],
+        panel: ko.observable('Sheet'),
+        foo: ko.observable(0),
+        
+        // Behaviors
+        saveSettings: function() {
+            var post = {
+                state: this.state, points: this.points, grudges: this.grudges, favors: this.favors,
+                characters: ko.utils.arrayMap(this.characters(), function(c) { return { email: c.email() }; }),
+                strikes: ko.utils.arrayMap(this.strikes(), function(s) { return s.strikes(); }),
+            }
+            $.ajax("/root/", { data: ko.toJSON(post) })
+        },
+        saveRelations: function() { $.ajax("/relations/", { data: ko.toJSON({ relations: this.relations }) }) },
+        saveToys: function() { $.ajax("/toys/", { data: ko.mapping.toJSON({ email: this.email, items: this.currentItems, shadows: this.currentShadows }) }) },
+        addCharacter: function() { this.characters.push(new Character()); },
+        addItem: function() { this.items.push(new Item({ owner: this.email() })); },
+        addShadow: function() { this.shadows.push(new Shadow({ owner: this.email() })); },
+        nextRound: function() { $.ajax("/next/"); },
+        ranks: function(name) {
+            var tgt = ko.utils.arrayFirst(this.rankings(), function(r) { return r.name() == name; });
+            if (tgt) {
+                return ko.toJS(tgt.ranks);
+            }
+            return [];
+        },
+    };
 
-	// My character data
-	viewModel.myself = ko.dependentObservable(function() {
-		return ko.utils.arrayFirst(viewModel.characters(), function(c) { return c.email() == viewModel.email(); });
-	}, viewModel);
-	viewModel.currentItems = ko.dependentObservable(function() {
-		return ko.utils.arrayFilter(viewModel.items(), function(i) { return i.owner() == viewModel.email(); });
-	}, viewModel);
-	viewModel.currentShadows = ko.dependentObservable(function() {
-		return ko.utils.arrayFilter(viewModel.shadows(), function(i) { return i.owner() == viewModel.email(); });
-	}, viewModel);
-	viewModel.currentRelations = ko.dependentObservable(function() {
-		return ko.utils.arrayFilter(viewModel.relations(), function(r) { return (r.source() == viewModel.email()) || (r.target() == viewModel.email()); });
-	}, viewModel);
+    // My character data
+    viewModel.myself = ko.dependentObservable(function() {
+        return ko.utils.arrayFirst(viewModel.characters(), function(c) { return c.email() == viewModel.email(); });
+    }, viewModel);
+    viewModel.currentItems = ko.dependentObservable(function() {
+        return ko.utils.arrayFilter(viewModel.items(), function(i) { return i.owner() == viewModel.email(); });
+    }, viewModel);
+    viewModel.currentShadows = ko.dependentObservable(function() {
+        return ko.utils.arrayFilter(viewModel.shadows(), function(i) { return i.owner() == viewModel.email(); });
+    }, viewModel);
+    viewModel.currentRelations = ko.dependentObservable(function() {
+        return ko.utils.arrayFilter(viewModel.relations(), function(r) { return (r.source() == viewModel.email()) || (r.target() == viewModel.email()); });
+    }, viewModel);
 
-	viewModel.itemsCost = ko.dependentObservable(function() {
-		var total = 0;
-		ko.utils.arrayForEach(this.currentItems(), function(i) {
-			total = total + parseInt(i.quantity()) * Math.max( 1, 
-				parseInt(i.vitality()) +	parseInt(i.aggression()) + parseInt(i.intelligence()) +
-				parseInt(i.movement()) +	parseInt(i.psychic_sensitivity()) + parseInt(i.psychic_defense()) +
-				parseInt(i.shadow_movement()) +	parseInt(i.shadow_control()) + parseInt(i.shapeshifting()) + parseInt(i.trump_images()) + parseInt(i.power_words()) +
-				0
-			);
-		});
-		return total;
-	}, viewModel);
-	viewModel.shadowsCost = ko.dependentObservable(function() {
-		var total = 0;
-		ko.utils.arrayForEach(this.currentShadows(), function(s) {
-			total = total + parseInt(s.primality()) + parseInt(s.control()) + parseInt(s.barriers());
-		});
-		return total;
-	}, viewModel);
+    viewModel.itemsCost = ko.dependentObservable(function() {
+        var total = 0;
+        ko.utils.arrayForEach(this.currentItems(), function(i) {
+            total = total + parseInt(i.quantity()) * Math.max( 1, 
+                parseInt(i.vitality()) +    parseInt(i.aggression()) + parseInt(i.intelligence()) +
+                parseInt(i.movement()) +    parseInt(i.psychic_sensitivity()) + parseInt(i.psychic_defense()) +
+                parseInt(i.shadow_movement()) +    parseInt(i.shadow_control()) + parseInt(i.shapeshifting()) + parseInt(i.trump_images()) + parseInt(i.power_words()) +
+                0
+            );
+        });
+        return total;
+    }, viewModel);
+    viewModel.shadowsCost = ko.dependentObservable(function() {
+        var total = 0;
+        ko.utils.arrayForEach(this.currentShadows(), function(s) {
+            total = total + parseInt(s.primality()) + parseInt(s.control()) + parseInt(s.barriers());
+        });
+        return total;
+    }, viewModel);
 
-	viewModel.totalSpent = ko.dependentObservable(function() {
-		var bids = 0;
-		if ( this.myself() ) { bids = this.myself().spent(); }
-		var items = this.itemsCost();
-		var shadows = this.shadowsCost();
-		return bids + items + shadows;
-	}, viewModel);
-	viewModel.stuff = ko.dependentObservable(function() {
-		var toSpend = 0;
-		if ( this.myself() ) { toSpend = this.myself().toSpend(); }
-		return toSpend - this.totalSpent();
-	}, viewModel);
+    viewModel.totalSpent = ko.dependentObservable(function() {
+        var bids = 0;
+        if ( this.myself() ) { bids = this.myself().spent(); }
+        var items = this.itemsCost();
+        var shadows = this.shadowsCost();
+        return bids + items + shadows;
+    }, viewModel);
+    viewModel.stuff = ko.dependentObservable(function() {
+        var toSpend = 0;
+        if ( this.myself() ) { toSpend = this.myself().toSpend(); }
+        return toSpend - this.totalSpent();
+    }, viewModel);
 
-	// Connection to the server
-	viewModel.openChannel = ko.dependentObservable(function() {
-		if (this.token()) {
-			channel = new goog.appengine.Channel(this.token());
-			socket = channel.open();
-			socket.onmessage = function(object) {	load(JSON.parse(object.data)); };
-			socket.onerror = function(object) {
-				viewModel.token = false;
-				$.ajax("/root/", { type: "get" });
-			};
-			return true;
-		} else {
-			return false;
-		}
-	}, viewModel);
-	
-	// We're loaded, let's get on with this
-	$(document).ready( function () {
-		// Style some of the UI
-		$('div#dashboard').dialog({
-			autoOpen: false, modal: true, draggable: false, resizable: false, width: "95%",
-			buttons: { "Ok": function() { $(this).dialog("close"); } },
-		});
-		
-		// Setup how we'll handle ajax
-		$('nav.footer').ajaxStart(function() { $(this).fadeIn('slow'); }).ajaxStop(function() { $(this).fadeOut('slow'); });
-		$.ajaxSetup({ type: "post", dataType: "json", success: load, });
+    // Connection to the server
+    viewModel.openChannel = ko.dependentObservable(function() {
+        if (this.token()) {
+            channel = new goog.appengine.Channel(this.token());
+            socket = channel.open();
+            socket.onmessage = function(object) {    load(JSON.parse(object.data)); };
+            socket.onerror = function(object) {
+                viewModel.token = false;
+                $.ajax("/root/", { type: "get" });
+            };
+            return true;
+        } else {
+            return false;
+        }
+    }, viewModel);
+    
+    // We're loaded, let's get on with this
+    $(document).ready( function () {
+        // Style some of the UI
+        $('div#dashboard').dialog({
+            autoOpen: false, modal: true, draggable: false, resizable: false, width: "95%",
+            buttons: { "Ok": function() { $(this).dialog("close"); } },
+        });
+        
+        // Setup how we'll handle ajax
+        $('nav.footer').ajaxStart(function() { $(this).fadeIn('slow'); }).ajaxStop(function() { $(this).fadeOut('slow'); });
+        $.ajaxSetup({ type: "post", dataType: "json", success: load, });
 
-		// Load this as a global variable
-		window.warViewModel = viewModel;
-		
-		// Bind the view to the UI
-		ko.applyBindings(viewModel);
-		
-		// Load data off the server -- this really starts things running
-		$.ajax("/root/", { type: "get" });
-	});
+        // Load this as a global variable
+        window.warViewModel = viewModel;
+        
+        // Bind the view to the UI
+        ko.applyBindings(viewModel);
+        
+        // Load data off the server -- this really starts things running
+        $.ajax("/root/", { type: "get" });
+    });
 </script>
 
 <nav class="header">
 <button data-bind="click: function() { $('div#dashboard').dialog('open'); }">Dashboard</button>
 <span data-bind="visible: (is_gm() && characters().length > 0)">
-	<select data-bind="options: characters, optionsText: 'email', optionsValue: 'email', value: email"></select>
-	<button data-bind="visible: (state() == 'attributes' || state() == 'powers'), click: nextRound">Next Round</button>
+    <select data-bind="options: characters, optionsText: 'email', optionsValue: 'email', value: email"></select>
+    <button data-bind="visible: (state() == 'attributes' || state() == 'powers'), click: nextRound">Next Round</button>
 </span>
 <span data-bind="visible: (state() == 'finalTouches')">
-	<select data-bind="options: pages, value: panel"></select>
+    <select data-bind="options: pages, value: panel"></select>
 </span>
 </nav>
 
 <div id="dashboard" title="Labor Day Throne War VIII Dashboard">
-	<!-- Admin controls -->
-	<div data-bind="visible: is_gm">
-	<h3>Game Settings</h3>
-	<ul>
-	<li><label for="gamePoints">Base points:</label> <input id="gamePoints" type="number" size="3" min="0" data-bind="value: points" /></li>
-	<li><label for="gameGrudges">Max grudges:</label> <input id="gameGrudges" type="range" size="3" min="0" max="5" data-bind="value: grudges" /></li>
-	<li><label for="gameFavors">Max favors:</label> <input id="gameFavors" type="range" size="3" min="0" max="5" data-bind="value: favors" /></li>
-	<li><label for="gameState">State:</label> <select id="gameState" data-bind="options: states, value: state"></select>
-	<li><u>Player Roster:</u><ul data-bind="template: { name: 'addPlayersTemplate', foreach: characters }"></ul><button data-bind="click: addCharacter">Add</button></li>
-	<li><u>Strikes:</u><ul data-bind="template: { name: 'strikesTemplate', foreach: strikes }"></ul></li>
-	<li><button data-bind="click: saveSettings">Update</button>
-	</ul>
-	</div>
-	<script type="text/html" id="addPlayersTemplate">
-		<li><input data-bind="value: email" type="email" placeholder="victim@gmail.com" required /> <a href="#" data-bind="click: remove">Remove</a></li>
-	</script>
-	<script type="text/html" id="strikesTemplate">
-		<li>${name} <input data-bind="value: strikes" type="number" size="3" /></li>
-	</script>
-	
-	<!-- Next div is general controls -->
-	<div>
-	<h3>System</h3>
-	<ul>
-	<li>Greetings, <span data-bind="text: email"></span></li>
-	<li><a href="#" data-bind="attr: { href: logout_url }">Logoff</a></li>
-	</ul>
-	</div>
+    <!-- Admin controls -->
+    <div data-bind="visible: is_gm">
+    <h3>Game Settings</h3>
+    <ul>
+    <li><label for="gamePoints">Base points:</label> <input id="gamePoints" type="number" size="3" min="0" data-bind="value: points" /></li>
+    <li><label for="gameGrudges">Max grudges:</label> <input id="gameGrudges" type="range" size="3" min="0" max="5" data-bind="value: grudges" /></li>
+    <li><label for="gameFavors">Max favors:</label> <input id="gameFavors" type="range" size="3" min="0" max="5" data-bind="value: favors" /></li>
+    <li><label for="gameState">State:</label> <select id="gameState" data-bind="options: states, value: state"></select>
+    <li><u>Player Roster:</u><ul data-bind="template: { name: 'addPlayersTemplate', foreach: characters }"></ul><button data-bind="click: addCharacter">Add</button></li>
+    <li><u>Strikes:</u><ul data-bind="template: { name: 'strikesTemplate', foreach: strikes }"></ul></li>
+    <li><button data-bind="click: saveSettings">Update</button>
+    </ul>
+    </div>
+    <script type="text/html" id="addPlayersTemplate">
+        <li><input data-bind="value: email" type="email" placeholder="victim@gmail.com" required /> <a href="#" data-bind="click: remove">Remove</a></li>
+    </script>
+    <script type="text/html" id="strikesTemplate">
+        <li>${name} <input data-bind="value: strikes" type="number" size="3" /></li>
+    </script>
+    
+    <!-- Next div is general controls -->
+    <div>
+    <h3>System</h3>
+    <ul>
+    <li>Greetings, <span data-bind="text: email"></span></li>
+    <li><a href="#" data-bind="attr: { href: logout_url }">Logoff</a></li>
+    </ul>
+    </div>
 </div>
 
 <!-- Players get told to wait -->
@@ -294,27 +294,27 @@ Please fill out some basic character information.
 two other players to have a grudge against you and you will have a grudge against two other players.</span>
 </div>
 <script type="text/html" id="nameAndRelationsTemplate">
-	<li><label for="charName">Character Name:</label> <input id="charName" data-bind="value: name" placeholder="Character Name" /></li>
-	<li><label for="charGrudges">Grudges:</label>
-			<input id="charGrudges" type="range" size="3" min="0" data-bind="attr: { max: $item.maxG }, value: grudges" />
-			(max <span data-bind="text: $item.maxG"></span>)</li>
-	<li><label for="charFavors">Favors:</label>
-			<input id="charFavors" type="range" size="3" min="0" data-bind="attr: { max: $item.maxF }, value: favors" />
-			(max <span data-bind="text: $item.maxF"></span>)</li>
-	<li><button data-bind="click: save">Update</button></li>
+    <li><label for="charName">Character Name:</label> <input id="charName" data-bind="value: name" placeholder="Character Name" /></li>
+    <li><label for="charGrudges">Grudges:</label>
+            <input id="charGrudges" type="range" size="3" min="0" data-bind="attr: { max: $item.maxG }, value: grudges" />
+            (max <span data-bind="text: $item.maxG"></span>)</li>
+    <li><label for="charFavors">Favors:</label>
+            <input id="charFavors" type="range" size="3" min="0" data-bind="attr: { max: $item.maxF }, value: favors" />
+            (max <span data-bind="text: $item.maxF"></span>)</li>
+    <li><button data-bind="click: save">Update</button></li>
 </script>
 
 <!-- Auctions -->
 <div data-bind="visible: (state() == 'attributes' || state() == 'powers')">
 <table class="auctions">
-	<tr class="bids" data-bind="visible: (state() == 'attributes'), template: { name: 'attributesBidTemplate', foreach: myself }"></tr>
-	<tr class="bids" data-bind="visible: (state() == 'powers'), template: { name: 'powersBidTemplate', foreach: myself }"></tr>
-	<tr><td></td><td></td><td></td><td></td><td class="pad" rowspan=4><table>
-		<thead><tr><th colspan=2>Points Spent</th></tr></thead>
-		<tbody data-bind="template: { name: 'spentTemplate', foreach: spent }"></tbody>
-	</table></td></tr>
-	<tr class="powers" data-bind="visible: (state() == 'powers'), template: { name: 'powersRankingTemplate', foreach: rankings }"></tr>
-	<tr data-bind="template: { name: 'attributesRankingTemplate', foreach: rankings }"></tr>
+    <tr class="bids" data-bind="visible: (state() == 'attributes'), template: { name: 'attributesBidTemplate', foreach: myself }"></tr>
+    <tr class="bids" data-bind="visible: (state() == 'powers'), template: { name: 'powersBidTemplate', foreach: myself }"></tr>
+    <tr><td></td><td></td><td></td><td></td><td class="pad" rowspan=4><table>
+        <thead><tr><th colspan=2>Points Spent</th></tr></thead>
+        <tbody data-bind="template: { name: 'spentTemplate', foreach: spent }"></tbody>
+    </table></td></tr>
+    <tr class="powers" data-bind="visible: (state() == 'powers'), template: { name: 'powersRankingTemplate', foreach: rankings }"></tr>
+    <tr data-bind="template: { name: 'attributesRankingTemplate', foreach: rankings }"></tr>
 </table>
 </div>
 <script type="text/html" id="addPlayersBidTemplate">FOO</script>
@@ -322,60 +322,60 @@ two other players to have a grudge against you and you will have a grudge agains
 <script type="text/html" id="finalTouchesBidTemplate">BAZ</script>
 <script type="text/html" id="playRelationsBidTemplate">GLEEP</script>
 <script type="text/html" id="attributesBidTemplate">
-	<td>Endurance: <input type="number" size="4" data-bind="attr: { min: endurance_paid }, value: endurance" /></td>
-	<td>Psyche: <input type="number" size="4" data-bind="attr: { min: psyche_paid }, value: psyche" /></td>
-	<td>Strength: <input type="number" size="4" data-bind="attr: { min: strength_paid }, value: strength" /></td>
-	<td>Warfare: <input type="number" size="4" data-bind="attr: { min: warfare_paid }, value: warfare" /></td>
-	<td><button data-bind="click: save">Bid <span data-bind="text: spent"></span> pts</button>
-		<span>${$item.closed}</span>
-	</td>
+    <td>Endurance: <input type="number" size="4" data-bind="attr: { min: endurance_paid }, value: endurance" /></td>
+    <td>Psyche: <input type="number" size="4" data-bind="attr: { min: psyche_paid }, value: psyche" /></td>
+    <td>Strength: <input type="number" size="4" data-bind="attr: { min: strength_paid }, value: strength" /></td>
+    <td>Warfare: <input type="number" size="4" data-bind="attr: { min: warfare_paid }, value: warfare" /></td>
+    <td><button data-bind="click: save">Bid <span data-bind="text: spent"></span> pts</button>
+        <span>${$item.closed}</span>
+    </td>
 </script>
 <script type="text/html" id="powersBidTemplate">
-	<td>Logrus: <input type="number" size="4" data-bind="attr: { min: logrus_paid }, value: logrus" /></td>
-	<td>Pattern: <input type="number" size="4" data-bind="attr: { min: pattern_paid }, value: pattern" /></td>
-	<td>Shapeshifting: <input type="number" size="4" data-bind="attr: { min: shapeshifting_paid }, value: shapeshifting" /></td>
-	<td>Trump: <input type="number" size="4" data-bind="attr: { min: trump_paid }, value: trump" /></td>
-	<td><button data-bind="click: save">Bid <span data-bind="text: spent"></span> pts</button></td>
+    <td>Logrus: <input type="number" size="4" data-bind="attr: { min: logrus_paid }, value: logrus" /></td>
+    <td>Pattern: <input type="number" size="4" data-bind="attr: { min: pattern_paid }, value: pattern" /></td>
+    <td>Shapeshifting: <input type="number" size="4" data-bind="attr: { min: shapeshifting_paid }, value: shapeshifting" /></td>
+    <td>Trump: <input type="number" size="4" data-bind="attr: { min: trump_paid }, value: trump" /></td>
+    <td><button data-bind="click: save">Bid <span data-bind="text: spent"></span> pts</button></td>
 </script>
 <script type="text/html" id="attributesRankingTemplate">
-	<td data-bind="visible: (['endurance', 'psyche', 'strength', 'warfare'].indexOf(name()) != -1)">
-		<table>
-			<thead>
-				<tr data-bind="css: { closed: (strikes() >= 3), danger: (strikes()==2), warning: (strikes()==1), open: (strikes()==0) }"><th colspan="2" data-bind="text: name().charAt(0).toUpperCase()+name().slice(1)"></th>
-				<th>Pts</th><th data-bind="text: reward"></th>
-			</tr></thead>
-			<tbody data-bind="template: { name: 'rankingListTemplate', foreach: ranks }"></tbody>
-		</table>
-	</td>
+    <td data-bind="visible: (['endurance', 'psyche', 'strength', 'warfare'].indexOf(name()) != -1)">
+        <table>
+            <thead>
+                <tr data-bind="css: { closed: (strikes() >= 3), danger: (strikes()==2), warning: (strikes()==1), open: (strikes()==0) }"><th colspan="2" data-bind="text: name().charAt(0).toUpperCase()+name().slice(1)"></th>
+                <th>Pts</th><th data-bind="text: reward"></th>
+            </tr></thead>
+            <tbody data-bind="template: { name: 'rankingListTemplate', foreach: ranks }"></tbody>
+        </table>
+    </td>
 </script>
 <script type="text/html" id="powersRankingTemplate">
-	<td data-bind="visible: (['logrus', 'pattern', 'shapeshifting', 'trump'].indexOf(name()) != -1)">
-		<table>
-			<thead><tr data-bind="css: { closed: (strikes() >= 3), danger: (strikes()==2), warning: (strikes()==1), open: (strikes()==0) }">
-				<th colspan="2" data-bind="text: name().charAt(0).toUpperCase()+name().slice(1)"></th>
-				<th>Pts</th><th data-bind="text: reward"></th>
-			</tr></thead>
-			<tbody data-bind="template: { name: 'rankingListTemplate', foreach: ranks }"></tbody>
-		</table>
-	</td>
+    <td data-bind="visible: (['logrus', 'pattern', 'shapeshifting', 'trump'].indexOf(name()) != -1)">
+        <table>
+            <thead><tr data-bind="css: { closed: (strikes() >= 3), danger: (strikes()==2), warning: (strikes()==1), open: (strikes()==0) }">
+                <th colspan="2" data-bind="text: name().charAt(0).toUpperCase()+name().slice(1)"></th>
+                <th>Pts</th><th data-bind="text: reward"></th>
+            </tr></thead>
+            <tbody data-bind="template: { name: 'rankingListTemplate', foreach: ranks }"></tbody>
+        </table>
+    </td>
 </script>
 <script type="text/html" id="rankingListTemplate">
-	<tr data-bind="visible: (bid() > 0)">
-		<td data-bind="text: rank"></td>
-		<td data-bind="text: name"></td>
-		<td data-bind="text: bid"></td>
-		<td data-bind="visible: reward, text: reward"></td>
-	</tr>
+    <tr data-bind="visible: (bid() > 0)">
+        <td data-bind="text: rank"></td>
+        <td data-bind="text: name"></td>
+        <td data-bind="text: bid"></td>
+        <td data-bind="visible: reward, text: reward"></td>
+    </tr>
 </script>
 <script type="text/html" id="spentTemplate">
-	<tr class="hasBid" data-bind="visible: updated">
-		<td data-bind="text: name"></td>
-		<td data-bind="text: spent"></td>
-	</tr>
-	<tr data-bind="visible: !updated()">
-		<td data-bind="text: name"></td>
-		<td data-bind="text: spent"></td>
-	</tr>
+    <tr class="hasBid" data-bind="visible: updated">
+        <td data-bind="text: name"></td>
+        <td data-bind="text: spent"></td>
+    </tr>
+    <tr data-bind="visible: !updated()">
+        <td data-bind="text: name"></td>
+        <td data-bind="text: spent"></td>
+    </tr>
 </script>
 
 <!-- Post-auction character finalization -->
@@ -397,127 +397,127 @@ Coming soon...
 </div>
 <script type="text/html" id="addItemsTemplate">
 <li><ul>
-	<li><label>Name:</label> <input size="20" data-bind="value: name" /> (<a href="#" data-bind="click: remove">Remove</a>)</li>
-	<li><label>Description:</label> <textarea rows=4 cols=80 data-bind="value: description"> </textarea></li>
-	<li><label>Vitality:</label><select data-bind="value: vitality">
-		<option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
-	<li><label>Aggression:</label><select data-bind="value: aggression">
-		<option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
-	<li><label>Intelligence:</label><select data-bind="value: intelligence">
-		<option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
-	<li><label>Movement:</label><select data-bind="value: movement">
-		<option value="0">None</option><option value="1">Mobile</option><option value="2">Powered</option><option value="4">Turbocharged</option></select></li>
-	<li><label>Psychic Sensitivity:</label><select data-bind="value: psychic_sensitivity">
-		<option value="0">None</option><option value="1">Sensitive</option><option value="2">Empathic</option><option value="4">Telepathic</option></select></li>
-	<li><label>Psychic Defense:</label><select data-bind="value: psychic_defense">
-		<option value="0">None</option><option value="1">Hidden</option><option value="2">Masked</option><option value="4">Barbed</option></select></li>
-	<li><label>Shadow Movement:</label><select data-bind="value: shadow_movement">
-		<option value="0">None</option><option value="1">Shadow Trail</option><option value="2">Shadow Path</option><option value="4">Shadow Seek</option></select></li>
-	<li><label>Shadow Control:</label><select data-bind="value: shadow_control">
-		<option value="0">None</option><option value="1">Mold Shadow Stuff</option><option value="2">Mold Shadow Creatures</option><option value="4">Mold Shadow Reality</option></select></li>
-	<li><label>Shape Shifting:</label><select data-bind="value: shapeshifting">
-		<option value="0">None</option><option value="1">Mundane Shape</option><option value="2">Transitional Shape</option><option value="4">Empowered Shape</option></select></li>
-	<li><label>Trump Images:</label><select data-bind="value: trump_images">
-		<option value="0">None</option><option value="1">Contains Trump Image</option><option value="2">Contains Named-&-Numbered Trump Images</option><option value="4">Trump Powered</option></select></li>
-	<li><label>Power Words:</label><select data-bind="value: power_words">
-		<option value="0">None</option><option value="1">Contains Power Word</option><option value="2">Contains Named-&-Numbered Power Words</option></select></li>
-	<li><label>Quantity Multiplier:</label><select data-bind="value: quantity">
-		<option value="0">Instant Conjuration</option><option value="1">Unique</option><option value="2">Named-and-Numbered</option><option value="3">Horde</option></select></li>
+    <li><label>Name:</label> <input size="20" data-bind="value: name" /> (<a href="#" data-bind="click: remove">Remove</a>)</li>
+    <li><label>Description:</label> <textarea rows=4 cols=80 data-bind="value: description"> </textarea></li>
+    <li><label>Vitality:</label><select data-bind="value: vitality">
+        <option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
+    <li><label>Aggression:</label><select data-bind="value: aggression">
+        <option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
+    <li><label>Intelligence:</label><select data-bind="value: intelligence">
+        <option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
+    <li><label>Movement:</label><select data-bind="value: movement">
+        <option value="0">None</option><option value="1">Mobile</option><option value="2">Powered</option><option value="4">Turbocharged</option></select></li>
+    <li><label>Psychic Sensitivity:</label><select data-bind="value: psychic_sensitivity">
+        <option value="0">None</option><option value="1">Sensitive</option><option value="2">Empathic</option><option value="4">Telepathic</option></select></li>
+    <li><label>Psychic Defense:</label><select data-bind="value: psychic_defense">
+        <option value="0">None</option><option value="1">Hidden</option><option value="2">Masked</option><option value="4">Barbed</option></select></li>
+    <li><label>Shadow Movement:</label><select data-bind="value: shadow_movement">
+        <option value="0">None</option><option value="1">Shadow Trail</option><option value="2">Shadow Path</option><option value="4">Shadow Seek</option></select></li>
+    <li><label>Shadow Control:</label><select data-bind="value: shadow_control">
+        <option value="0">None</option><option value="1">Mold Shadow Stuff</option><option value="2">Mold Shadow Creatures</option><option value="4">Mold Shadow Reality</option></select></li>
+    <li><label>Shape Shifting:</label><select data-bind="value: shapeshifting">
+        <option value="0">None</option><option value="1">Mundane Shape</option><option value="2">Transitional Shape</option><option value="4">Empowered Shape</option></select></li>
+    <li><label>Trump Images:</label><select data-bind="value: trump_images">
+        <option value="0">None</option><option value="1">Contains Trump Image</option><option value="2">Contains Named-&-Numbered Trump Images</option><option value="4">Trump Powered</option></select></li>
+    <li><label>Power Words:</label><select data-bind="value: power_words">
+        <option value="0">None</option><option value="1">Contains Power Word</option><option value="2">Contains Named-&-Numbered Power Words</option></select></li>
+    <li><label>Quantity Multiplier:</label><select data-bind="value: quantity">
+        <option value="0">Instant Conjuration</option><option value="1">Unique</option><option value="2">Named-and-Numbered</option><option value="3">Horde</option></select></li>
 </ul></li>
 </script>
 <script type="text/html" id="addShadowsTemplate">
 <li><ul>
-	<li><label>Name:</label> <input size="20" data-bind="value: name" /> (<a href="#" data-bind="click: remove">Remove</a>)</li>
-	<li><label>Description:</label><textarea rows=4 cols=80 data-bind="value: description"></textarea></li>
-	<li><label>Primality:</label><select data-bind="value: primality">
-		<option value="1">Personal Shadow</option><option value="2">Shadow of the Realm</option><option value="4">Primal Plane</option></select></li>
-	<li><label>Control:</label><select data-bind="value: control">
-		<option value="0">None</option><option value="1">Control of Contents</option><option value="2">Control of Natural Laws</option><option value="4">Shadow of Destiny</option></select></li>
-	<li><label>Barriers:</label><select data-bind="value: barriers">
-		<option value="0">None</option><option value="1">Communications Barrier</option><option value="2">Restricted Access</option><option value="4">Guardians</option></select></li>
+    <li><label>Name:</label> <input size="20" data-bind="value: name" /> (<a href="#" data-bind="click: remove">Remove</a>)</li>
+    <li><label>Description:</label><textarea rows=4 cols=80 data-bind="value: description"></textarea></li>
+    <li><label>Primality:</label><select data-bind="value: primality">
+        <option value="1">Personal Shadow</option><option value="2">Shadow of the Realm</option><option value="4">Primal Plane</option></select></li>
+    <li><label>Control:</label><select data-bind="value: control">
+        <option value="0">None</option><option value="1">Control of Contents</option><option value="2">Control of Natural Laws</option><option value="4">Shadow of Destiny</option></select></li>
+    <li><label>Barriers:</label><select data-bind="value: barriers">
+        <option value="0">None</option><option value="1">Communications Barrier</option><option value="2">Restricted Access</option><option value="4">Guardians</option></select></li>
 </ul></li>
 </script>
 <div data-bind="visible: (state() == 'finalTouches' && panel() == 'Buyups')">
 <table class="auctions">
-	<tr class="bids" data-bind="template: { name: 'powersBidTemplate', foreach: myself }"></tr>
-	<tr><td colspan=5</td><td class="pad" rowspan=4><table>
-		<thead><tr><th colspan=2>Points Spent</th></tr></thead>
-		<tbody data-bind="template: { name: 'spentTemplate', foreach: spent }"></tbody>
-	</table></td></tr>
-	<tr class="powers" data-bind="template: { name: 'powersRankingTemplate', foreach: rankings }"></tr>
-	<tr class="bids" data-bind="template: { name: 'attributesBidTemplate', foreach: myself }"></tr>
-	<tr data-bind="template: { name: 'attributesRankingTemplate', foreach: rankings }"></tr>
-	<tr data-bind="template: { name: 'conjPWTemplate', foreach: myself }"></tr>
+    <tr class="bids" data-bind="template: { name: 'powersBidTemplate', foreach: myself }"></tr>
+    <tr><td colspan=5</td><td class="pad" rowspan=4><table>
+        <thead><tr><th colspan=2>Points Spent</th></tr></thead>
+        <tbody data-bind="template: { name: 'spentTemplate', foreach: spent }"></tbody>
+    </table></td></tr>
+    <tr class="powers" data-bind="template: { name: 'powersRankingTemplate', foreach: rankings }"></tr>
+    <tr class="bids" data-bind="template: { name: 'attributesBidTemplate', foreach: myself }"></tr>
+    <tr data-bind="template: { name: 'attributesRankingTemplate', foreach: rankings }"></tr>
+    <tr data-bind="template: { name: 'conjPWTemplate', foreach: myself }"></tr>
 </table>
 <h3>Hit bid above to submit the answers to the questions below. You will receive one point per question answered.</h3>
 <table class="relations" data-bind="template: { name: 'questionsTemplate', foreach: myself }"></table>
 </div>
 <script type="text/html" id="conjPWTemplate">
-	<td colspan=6>
-		<b>Available:</b>
-		<span data-bind="text: toSpend"></span>
-		<b>Spent:</b>
-		<span data-bind="text: warViewModel.totalSpent"></span>
-		<b>Stuff:</b>
-		<span data-bind="text: warViewModel.stuff"></span>
-		<b>Conjuration:</b> <select data-bind="value: conjuration">
-			<option value="0">No (0 pts)</option>
-			<option value="10">Yes (10 pts)</option>
-			<option value="11">Yes + 1 extra (11 pts)</option>
-			<option value="12">Yes + 2 extra (12 pts)</option>
-			<option value="13">Yes + 3 extra (13 pts)</option>
-			<option value="14">Yes + 4 extra (14 pts)</option>
-			<option value="15">Yes + 5 extra (15 pts)</option>
-			<option value="16">Yes + 6 extra (16 pts)</option>
-			<option value="17">Yes + 7 extra (17 pts)</option>
-			<option value="18">Yes + 8 extra (18 pts)</option>
-			<option value="19">Yes + 9 extra (19 pts)</option>
-			<option value="20">Yes + 10 extra (20 pts)</option>
-		</select>
-		<b>Power Words:</b> <select data-bind="value: power_words">
-			<option value="0">No (0 pts)</option>
-			<option value="10">Base 5 (10 pts)</option>
-			<option value="11">Base 5 + 1 extra (11 pts)</option>
-			<option value="12">Base 5 + 2 extra (12 pts)</option>
-			<option value="13">Base 5 + 3 extra (13 pts)</option>
-			<option value="14">Base 5 + 4 extra (14 pts)</option>
-			<option value="15">Base 5 + 5 extra (15 pts)</option>
-			<option value="16">Base 5 + 6 extra (16 pts)</option>
-			<option value="17">Base 5 + 7 extra (17 pts)</option>
-			<option value="18">Base 5 + 8 extra (18 pts)</option>
-			<option value="19">Base 5 + 9 extra (19 pts)</option>
-			<option value="20">Base 5 + 10 extra (20 pts)</option>
-		</select>
-	</td>
+    <td colspan=6>
+        <b>Available:</b>
+        <span data-bind="text: toSpend"></span>
+        <b>Spent:</b>
+        <span data-bind="text: warViewModel.totalSpent"></span>
+        <b>Stuff:</b>
+        <span data-bind="text: warViewModel.stuff"></span>
+        <b>Conjuration:</b> <select data-bind="value: conjuration">
+            <option value="0">No (0 pts)</option>
+            <option value="10">Yes (10 pts)</option>
+            <option value="11">Yes + 1 extra (11 pts)</option>
+            <option value="12">Yes + 2 extra (12 pts)</option>
+            <option value="13">Yes + 3 extra (13 pts)</option>
+            <option value="14">Yes + 4 extra (14 pts)</option>
+            <option value="15">Yes + 5 extra (15 pts)</option>
+            <option value="16">Yes + 6 extra (16 pts)</option>
+            <option value="17">Yes + 7 extra (17 pts)</option>
+            <option value="18">Yes + 8 extra (18 pts)</option>
+            <option value="19">Yes + 9 extra (19 pts)</option>
+            <option value="20">Yes + 10 extra (20 pts)</option>
+        </select>
+        <b>Power Words:</b> <select data-bind="value: power_words">
+            <option value="0">No (0 pts)</option>
+            <option value="10">Base 5 (10 pts)</option>
+            <option value="11">Base 5 + 1 extra (11 pts)</option>
+            <option value="12">Base 5 + 2 extra (12 pts)</option>
+            <option value="13">Base 5 + 3 extra (13 pts)</option>
+            <option value="14">Base 5 + 4 extra (14 pts)</option>
+            <option value="15">Base 5 + 5 extra (15 pts)</option>
+            <option value="16">Base 5 + 6 extra (16 pts)</option>
+            <option value="17">Base 5 + 7 extra (17 pts)</option>
+            <option value="18">Base 5 + 8 extra (18 pts)</option>
+            <option value="19">Base 5 + 9 extra (19 pts)</option>
+            <option value="20">Base 5 + 10 extra (20 pts)</option>
+        </select>
+    </td>
 </script>
 <script type="text/html" id="questionsTemplate">
-	<tbody data-bind="template: { name: 'questionDetailsTemplate', foreach: questions }"></tbody>
+    <tbody data-bind="template: { name: 'questionDetailsTemplate', foreach: questions }"></tbody>
 </script>
 <script type="text/html" id="questionDetailsTemplate">
-	<tr>
-		<td data-bind="text: question"></td>
-		<td><textarea rows=4 cols=80 data-bind="value: answer"> </textarea></td>
-	</tr>
+    <tr>
+        <td data-bind="text: question"></td>
+        <td><textarea rows=4 cols=80 data-bind="value: answer"> </textarea></td>
+    </tr>
 </script>
 
 <div data-bind="visible: (state() == 'finalTouches' && panel() == 'Relations')">
 <table class="relations">
-	<thead>
-		<tr><th>Source</th><th rowspan=3>Reason</th></tr>
-		<tr><th>Relation</th></tr>
-		<tr><th>Target</th></tr>
-	</thead>
-	<tbody data-bind="template: { name: 'relationsTemplate', foreach: currentRelations }"></tbody>
-	<tbody><tr><th><button data-bind="click: saveRelations">Submit</button></th></tr></tbody>
+    <thead>
+        <tr><th>Source</th><th rowspan=3>Reason</th></tr>
+        <tr><th>Relation</th></tr>
+        <tr><th>Target</th></tr>
+    </thead>
+    <tbody data-bind="template: { name: 'relationsTemplate', foreach: currentRelations }"></tbody>
+    <tbody><tr><th><button data-bind="click: saveRelations">Submit</button></th></tr></tbody>
 </table>
 </div>
 <script type="text/html" id="relationsTemplate">
-	<tr class="splitter"><td data-bind="text: source"></td><td rowspan=3><textarea rows=4 cols=80 data-bind="value: reason"> </textarea></td></tr>
-	<tr><td>
-		<span data-bind="visible: (relation() == 'favors')">owes a favor to</span>
-		<span data-bind="visible: (relation() == 'grudges')">has a grudge against</span>
-	</td></tr>
-	<tr><td data-bind="text: target"></td></tr>
+    <tr class="splitter"><td data-bind="text: source"></td><td rowspan=3><textarea rows=4 cols=80 data-bind="value: reason"> </textarea></td></tr>
+    <tr><td>
+        <span data-bind="visible: (relation() == 'favors')">owes a favor to</span>
+        <span data-bind="visible: (relation() == 'grudges')">has a grudge against</span>
+    </td></tr>
+    <tr><td data-bind="text: target"></td></tr>
 </script>
 
 <nav class="footer"><progress>Sending data...</progress></nav>
