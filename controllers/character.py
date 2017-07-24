@@ -24,7 +24,7 @@ class Character(ajax.AJAX):
         for token in broadcast.get():
             (buser, expires) = token
             if user == buser:
-                message['characters'] = Models.Characters.read_all(user = buser, is_gm = self.is_gm(buser))
+                message['characters'] = Models.Characters.read_all(user=buser, is_gm=self.is_gm(buser))
             else:
                 message['characters'] = Models.Characters.read_all()
             broadcast.send(token, json.dumps(message))

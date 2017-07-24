@@ -4,9 +4,19 @@ from google.appengine.ext import db
 import logging, json
 
 
+GMS = [
+    'svirpridon@gmail.com',
+    'kilroy@gmail.com',
+    'aaron.g.brakke@gmail.com',
+    'test@example.com',
+]
+
 class AJAX(webapp.RequestHandler):
     def json(self):
         """ Get the post arguments we got as JSON """
+        # FIXME:
+        # https://webapp2.readthedocs.io/en/latest/guide/request.html#post-data
+        # switch to request.params
         return dict([(str(key), value) for (key, value) in json.loads(self.request.body).iteritems()])
 
 
@@ -14,7 +24,7 @@ class AJAX(webapp.RequestHandler):
         """ is the user who was passed (or the current user) a gm? """
         if not user:
             user = users.get_current_user()
-        return user.email().lower() in ['svirpridon@gmail.com', 'kilroy@gmail.com', 'paulross@gmail.com', 'test@example.com']
+        return user.email().lower() in GMS
 
 
     def reply(self, **kwargs):

@@ -44,7 +44,7 @@ class Next(ajax.AJAX):
         for token in broadcast.get():
             (user, expires) = token
             # Characters have to be added on a per-character basis
-            message.update(characters = Models.Characters.read_all(user = user, is_gm = self.is_gm(user)))
+            message.update(characters = Models.Characters.read_all(user=user, is_gm=self.is_gm(user)))
             broadcast.send(token, json.dumps(message))
 
         # And send a reply of success

@@ -18,8 +18,8 @@ class Relations(ajax.AJAX):
                 random.shuffle(targets)
                 # Build the inital pairings, which may have errors
                 pairings = zip(sources, targets)
-                success = filter(lambda x: x[0]!=x[1], pairings)
-                identity = filter(lambda x: x[0]==x[1], pairings)
+                success = filter(lambda x: x[0] != x[1], pairings)
+                identity = filter(lambda x: x[0] == x[1], pairings)
                 while len(identity) > 0:
                     first = identity.pop()
                     if len(identity) >= 1:
@@ -33,9 +33,9 @@ class Relations(ajax.AJAX):
                     success.extend([(first[0], second[1]), (second[0], first[1])])
                 # success is now all valid pairings
                 for (source, target) in success:
-                    rel = Models.Relation(source = source, relation = relation, target = target)
+                    rel = Models.Relation(source=source, relation=relation, target=target)
                     rel.put()
-        self.reply(result = 'success')
+        self.reply(result='success')
 
     def post(self):
         user = users.get_current_user()
@@ -54,5 +54,5 @@ class Relations(ajax.AJAX):
             for token in broadcast.get():
                 (target, expires) = token
                 if target == user or self.is_gm(target):
-                    message = Models.Relation.read_all(user = target, is_gm = self.is_gm(target))
+                    message = Models.Relation.read_all(user=target, is_gm=self.is_gm(target))
                     broadcast.send(token, json.dumps({ 'relations': message }))

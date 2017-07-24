@@ -22,15 +22,15 @@ class Root(ajax.AJAX):
         response.update(settings.read())
         # The key/email/name for other characters
         characters = Models.Characters.all()
-        response.update(characters = Models.Characters.read_all(user = user, is_gm = is_gm))
+        response.update(characters=Models.Characters.read_all(user=user, is_gm=is_gm))
         # Add rankings for the auctions
         (ranked, spent) = Rules.rankings(settings, characters)
-        response.update(rankings = ranked, spent = spent)
+        response.update(rankings=ranked, spent=spent)
         #logging.debug("rankings are %s" % repr(response['rankings']))
         # Add relations
-        response.update(relations = Models.Relation.read_all(user = user, is_gm = is_gm))
+        response.update(relations=Models.Relation.read_all(user=user, is_gm=is_gm))
         # And items and shadows
-        response.update(items = Models.Items.read_all(user = user, is_gm = is_gm), shadows = Models.Shadows.read_all(user = user, is_gm = is_gm))
+        response.update(items=Models.Items.read_all(user=user, is_gm=is_gm), shadows=Models.Shadows.read_all(user=user, is_gm=is_gm))
         # Send that to the user
         self.reply(**response)
 
@@ -51,15 +51,15 @@ class Root(ajax.AJAX):
                         emails.remove(character.email())
                 for newbie in emails:
                     user = users.User(newbie)
-                    victim = Models.Characters.find(user = user, create=True)
+                    victim = Models.Characters.find(user=user, create=True)
                     victim.put()
             # Now build an update to send to everyone of the throne war settings and new character list
             message = Models.Settings.find().read()
             # And the ranks in case we switched to one of those modes
             settings.last_update = datetime.datetime.now()
             (ranked, spent) = Rules.rankings(settings, Models.Characters.all())
-            message.update(rankings = ranked, spent = spent)
+            message.update(rankings=ranked, spent=spent)
             for token in broadcast.get():
                 (user, expires) = token
-                message.update(characters = Models.Characters.read_all(user = user, is_gm = self.is_gm(user)))
+                message.update(characters=Models.Characters.read_all(user=user, is_gm=self.is_gm(user)))
                 broadcast.send(token, json.dumps(message))
