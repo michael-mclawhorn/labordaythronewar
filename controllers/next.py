@@ -3,14 +3,14 @@ from google.appengine.ext import webapp
 import logging, json, operator, datetime
 from itertools import izip, count
 
-import Models
+import models
 import rules
 import broadcast, ajax
 
 class Next(ajax.AJAX):
     def post(self):
-        settings = Models.Settings.find()
-        characters = Models.Characters.all()
+        settings = models.Settings.find()
+        characters = models.Characters.all()
         auctions = rules.auctions
 
         # Compute the updates, then hold that thought
@@ -44,7 +44,7 @@ class Next(ajax.AJAX):
         for token in broadcast.get():
             (user, expires) = token
             # Characters have to be added on a per-character basis
-            message.update(characters = Models.Characters.read_all(user=user, is_gm=self.is_gm(user)))
+            message.update(characters = models.Characters.read_all(user=user, is_gm=self.is_gm(user)))
             broadcast.send(token, json.dumps(message))
 
         # And send a reply of success

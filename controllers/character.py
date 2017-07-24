@@ -2,29 +2,29 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 import logging, json
 
-import Models
+import models
 import rules
 import broadcast, ajax
 
 class Character(ajax.AJAX):
     def post(self):
-        settings = Models.Settings.find()
+        settings = models.Settings.find()
         user = users.get_current_user()
         data = self.json()
         # Get the character to be updated
         if self.is_gm():
-            character = Models.Characters.find(email = data['email'])
+            character = models.Characters.find(email = data['email'])
         else:
-            character = Models.Characters.find(user = user)
+            character = models.Characters.find(user = user)
         # Do the update
         character.write(settings, user, self.is_gm(), **data)
         # Broadcast any needed changes out
-        (ranked, spent) = rules.rankings(settings, Models.Characters.all())
+        (ranked, spent) = rules.rankings(settings, models.Characters.all())
         message = { 'spent': spent }
         for token in broadcast.get():
             (buser, expires) = token
             if user == buser:
-                message['characters'] = Models.Characters.read_all(user=buser, is_gm=self.is_gm(buser))
+                message['characters'] = models.Characters.read_all(user=buser, is_gm=self.is_gm(buser))
             else:
-                message['characters'] = Models.Characters.read_all()
+                message['characters'] = models.Characters.read_all()
             broadcast.send(token, json.dumps(message))

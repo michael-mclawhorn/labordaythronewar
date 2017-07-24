@@ -3,17 +3,17 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 import logging, json, random
 
-import Models
+import models
 import broadcast, ajax
 
 class Relations(ajax.AJAX):
     def get(self):
         user = users.get_current_user()
-        q = Models.Relation.all()
+        q = models.Relation.all()
         if len(db.get(q)) == 0:
             # No relations defined, generate them
             for relation in ['favors', 'grudges']:
-                sources = [character.user() for character in Models.Characters.all() for i in range(getattr(character, relation))]
+                sources = [character.user() for character in models.Characters.all() for i in range(getattr(character, relation))]
                 targets = list(sources)
                 random.shuffle(targets)
                 # Build the inital pairings, which may have errors
@@ -33,7 +33,7 @@ class Relations(ajax.AJAX):
                     success.extend([(first[0], second[1]), (second[0], first[1])])
                 # success is now all valid pairings
                 for (source, target) in success:
-                    rel = Models.Relation(source=source, relation=relation, target=target)
+                    rel = models.Relation(source=source, relation=relation, target=target)
                     rel.put()
         self.reply(result='success')
 
@@ -43,7 +43,7 @@ class Relations(ajax.AJAX):
         dirty = False
         for data in all_data['relations']:
             # Try to find that relation, be sure that they own it
-            relation = Models.Relation.find(key = data['key'])
+            relation = models.Relation.find(key = data['key'])
             # Make sure they can edit it
             if relation and (self.is_gm() or user == relation.source or user == relation.target):
                 logging.debug("Data is %s" % repr(data))
@@ -54,5 +54,5 @@ class Relations(ajax.AJAX):
             for token in broadcast.get():
                 (target, expires) = token
                 if target == user or self.is_gm(target):
-                    message = Models.Relation.read_all(user=target, is_gm=self.is_gm(target))
+                    message = models.Relation.read_all(user=target, is_gm=self.is_gm(target))
                     broadcast.send(token, json.dumps({ 'relations': message }))

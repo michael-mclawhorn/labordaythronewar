@@ -3,7 +3,7 @@ from google.appengine.api import users
 from google.appengine.ext import webapp
 import logging, json
 
-import Models
+import models
 import ajax
 
 class Toys(ajax.AJAX):
@@ -13,10 +13,10 @@ class Toys(ajax.AJAX):
         logging.debug("Toys.post all_data %s" % repr(all_data))
         dirty = False
         if self.is_gm():
-            character = Models.Characters.find(email=all_data['email'])
+            character = models.Characters.find(email=all_data['email'])
         else:
-            character = Models.Characters.find(user=user)
-        for (klass, target) in [(Models.Items, 'items'), (Models.Shadows, 'shadows')]:
+            character = models.Characters.find(user=user)
+        for (klass, target) in [(models.Items, 'items'), (models.Shadows, 'shadows')]:
             if target in all_data:
                 for remove in klass.all():
                     if remove.owner.email() == character.email():
