@@ -18,7 +18,7 @@ class Toys(ajax.AJAX):
             character = models.Characters.find(user=user)
         for (klass, target) in [(models.Items, 'items'), (models.Shadows, 'shadows')]:
             if target in all_data:
-                for remove in klass.all():
+                for remove in klass.query():
                     if remove.owner.email() == character.email():
                         remove.delete()
             for data in all_data[target]:

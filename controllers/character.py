@@ -19,7 +19,7 @@ class Character(ajax.AJAX):
         # Do the update
         character.write(settings, user, self.is_gm(), **data)
         # Broadcast any needed changes out
-        (ranked, spent) = rules.rankings(settings, models.Characters.all())
+        (ranked, spent) = rules.rankings(settings, models.Characters.query())
         message = { 'spent': spent }
         for token in broadcast.get():
             (buser, expires) = token

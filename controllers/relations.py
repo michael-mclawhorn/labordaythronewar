@@ -9,11 +9,11 @@ import broadcast, ajax
 class Relations(ajax.AJAX):
     def get(self):
         user = users.get_current_user()
-        q = models.Relation.all()
+        q = models.Relation.query()
         if len(db.get(q)) == 0:
             # No relations defined, generate them
             for relation in ['favors', 'grudges']:
-                sources = [character.user() for character in models.Characters.all() for i in range(getattr(character, relation))]
+                sources = [character.user() for character in models.Characters.query() for i in range(getattr(character, relation))]
                 targets = list(sources)
                 random.shuffle(targets)
                 # Build the inital pairings, which may have errors

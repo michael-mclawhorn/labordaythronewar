@@ -1,38 +1,38 @@
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.api import users
 import logging
 
 from characters import Characters
+from mixins import ReadMixin, WriteMixin
 
-class Items(db.Model):
+class Items(ReadMixin, WriteMixin, ndb.Model):
     """
     An item paid for at character creation
     """
-    name = db.StringProperty(default="unnamed")
-    owner = db.ReferenceProperty(Characters)
-    description = db.TextProperty(default="no description")
+    name = ndb.StringProperty(default="unnamed")
+    owner = ndb.KeyProperty(kind=Characters)
+    description = ndb.TextProperty(default="no description")
 
-    vitality = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    aggression = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    intelligence = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    vitality = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    aggression = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    intelligence = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
 
-    movement = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    psychic_sensitivity = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    psychic_defense = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    movement = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    psychic_sensitivity = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    psychic_defense = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
 
-    shadow_movement = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    shadow_control = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    shapeshifting = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    trump_images = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    power_words = db.IntegerProperty(default=0, choices=set([0, 1, 2]))
+    shadow_movement = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    shadow_control = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    shapeshifting = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    trump_images = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    power_words = ndb.IntegerProperty(default=0, choices=set([0, 1, 2]))
 
-    quantity = db.IntegerProperty(default=1, choices=set([0, 1, 2, 3]))
+    quantity = ndb.IntegerProperty(default=1, choices=set([0, 1, 2, 3]))
 
-    notes = db.TextProperty(default="none")
+    notes = ndb.TextProperty(default="none")
 
-    @staticmethod
-    def read_all(user=None, is_gm=False):
-        return [item.read() for item in Items.all() if item.owner.user() == user or is_gm]
+    def visible(serlf, user):
+        return self.owner.user() == user
 
     def read(self):
         return {
@@ -53,17 +53,3 @@ class Items(db.Model):
             'quantity': self.quantity,
             'notes': self.notes,
         }
-
-    def write(self, **kwargs):
-        logging.debug("kwargs %s" % repr(kwargs))
-        try:
-            for (prop, value) in kwargs.iteritems():
-                logging.debug("Trying to set %s to %s" % (prop, value))
-                if prop not in ['name', 'description', 'notes']:
-                    value = int(value)
-                setattr(self, prop, value)
-            self.put()
-            logging.debug("I am now %s" % repr(self.read()))
-            return True
-        except ValueError:
-            return False

@@ -1,26 +1,26 @@
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.api import users
 import logging
 
 from characters import Characters
+from mixins import ReadMixin, WriteMixin
 
-class Shadows(db.Model):
+class Shadows(ReadMixin, WriteMixin, ndb.Model):
     """
     An shadow paid for at character creation
     """
-    name = db.StringProperty(default="unnamed")
-    owner = db.ReferenceProperty(Characters)
-    description = db.TextProperty(default="no description")
+    name = ndb.StringProperty(default="unnamed")
+    owner = ndb.KeyProperty(kind=Characters)
+    description = ndb.TextProperty(default="no description")
 
-    primality = db.IntegerProperty(default=1, choices=set([1, 2, 4]))
-    control = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
-    barriers = db.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    primality = ndb.IntegerProperty(default=1, choices=set([1, 2, 4]))
+    control = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
+    barriers = ndb.IntegerProperty(default=0, choices=set([0, 1, 2, 4]))
 
-    notes = db.TextProperty(default="none")
+    notes = ndb.TextProperty(default="none")
 
-    @staticmethod
-    def read_all(user=None, is_gm=False):
-        return [shadow.read() for shadow in Shadows.all() if shadow.owner.user() == user or is_gm]
+    def visisble(self, user):
+        return self.owner.user() == user
 
     def read(self):
         return {
@@ -32,14 +32,3 @@ class Shadows(db.Model):
             'barriers': self.barriers,
             'notes': self.notes,
         }
-
-    def write(self, **kwargs):
-        try:
-            for (prop, value) in kwargs.iteritems():
-                if prop not in ['name', 'description', 'notes']:
-                    value = int(value)
-                setattr(self, prop, value)
-            self.put()
-            return True
-        except ValueError:
-            return False

@@ -1,16 +1,18 @@
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.api import users
 import logging
 
-class Relation(db.Model):
+from mixins import ReadMixin, WriteMixin
+
+class Relation(ReadMixin, WriteMixin, ndb.Model):
     """
     This represents the relationship between two players -- be it a
     favor or a grudge.
     """
-    source = db.UserProperty()
-    relation = db.StringProperty(choices=set(['favors', 'grudges']))
-    target = db.UserProperty()
-    reason = db.StringProperty(default='')
+    source = ndb.UserProperty()
+    relation = ndb.StringProperty(choices=set(['favors', 'grudges']))
+    target = ndb.UserProperty()
+    reason = ndb.StringProperty(default='')
 
     @staticmethod
     def find(key=None):
@@ -25,11 +27,5 @@ class Relation(db.Model):
             'reason': self.reason,
         }
 
-    @staticmethod
-    def read_all(user=None, is_gm=False):
-        return [rel.read() for rel in Relation.all() if is_gm or rel.source == user or rel.target == user]
-
-    def write(self, reason=None):
-        self.reason = reason
-        self.put()
-        return True
+    def visible(self, user):
+        return user in [self.source, self.target]

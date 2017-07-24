@@ -10,7 +10,7 @@ import broadcast, ajax
 class Next(ajax.AJAX):
     def post(self):
         settings = models.Settings.find()
-        characters = models.Characters.all()
+        characters = models.Characters.query()
         auctions = rules.auctions
 
         # Compute the updates, then hold that thought

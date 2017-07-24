@@ -1,7 +1,8 @@
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.api import users
 import logging
 
+from mixins import ReadMixin
 from settings import Settings
 import rules
 
@@ -12,29 +13,38 @@ QUESTIONS = [
     "The game begins with everyone pulling their daggers out of a dead Oberon. All the siblings murdered him together, including you. Why did you help? Did you hate Dad? Were you simply power-hungry? Were you coerced?",
 ]
 
-class Characters(db.Model):
+class Characters(ReadMixin, ndb.Model):
     """
     A character in a throne war. This holds pretty much everything you would expect
     on a character sheet.
     """
     # Player editable properties
-    name = db.StringProperty() # The character's name
-    grudges = db.IntegerProperty(default=0) # How many grudges they took
-    favors = db.IntegerProperty(default=0) # How many favors they took
-    questions = db.StringListProperty(default=['', '', '', '']) # Character questions answers
+    name = ndb.StringProperty() # The character's name
+    grudges = ndb.IntegerProperty(default=0) # How many grudges they took
+    favors = ndb.IntegerProperty(default=0) # How many favors they took
+    questions = ndb.StringProperty(repeated=True) # Character questions answers
 
     # Bids
-    bids_paid = db.ListProperty(int, default=[0]*10) # Comitted to these bids
-    bids_pending = db.ListProperty(int, default=[0]*10) # These are what they are bidding now
+    bids_paid = ndb.IntegerProperty(repeated=True) # Comitted to these bids
+    bids_pending = ndb.IntegerProperty(repeated=True) # These are what they are bidding now
 
     # GM-only properties
-    approved = db.UserProperty() # Which gm approved this character
-    notes = db.StringProperty() # GM's notes
-    delays = db.IntegerProperty(default=0) # How many delays have they had
-    queue = db.DateTimeProperty() # Set to a valid value if they are waiting on the GM
+    approved = ndb.UserProperty() # Which gm approved this character
+    notes = ndb.StringProperty() # GM's notes
+    delays = ndb.IntegerProperty(default=0) # How many delays have they had
+    queue = ndb.DateTimeProperty() # Set to a valid value if they are waiting on the GM
 
     # System properties
-    last_update = db.DateTimeProperty(auto_now=True)
+    last_update = ndb.DateTimeProperty(auto_now=True)
+
+    def __init__(self, *args, **kwargs):
+        super(Characters, self).__init__(
+            *args,
+            questions=['', '', '', ''],
+            bids_paid=[0]*len(rules.auctions),
+            bids_pending=[0]*len(rules.auctions),
+            **kwargs
+        )
 
     @staticmethod
     def find(key=None, user=None, email=None, create=False):
@@ -49,9 +59,8 @@ class Characters(db.Model):
         elif email:
             return f(email)
 
-    @staticmethod
-    def read_all(user=None, is_gm=False):
-        return [char.read(user=user, is_gm=is_gm) for char in Characters.all()]
+    def visible(self, user):
+        return True
 
     def email(self):
         return self.key().name()
@@ -113,7 +122,7 @@ class Characters(db.Model):
                         old = self.bids_paid[i]
                         try:
                             new = int(kwargs[auction.name])
-                            rungs = rules.rungs(Characters.all())[i]
+                            rungs = rules.rungs(Characters.query())[i]
                             #logging.debug("Calling %s's valid on old=%s, new=%s, rungs=%s" % (auction.name, old, new, repr(rungs)))
                             if auction.valid(rungs, old, new):
                                 self.bids_pending[i] = new
@@ -127,7 +136,7 @@ class Characters(db.Model):
             maxBuyup = 0
             valid = True
             for (i, auction) in enumerate(rules.auctions):
-                rungs = rules.rungs(Characters.all())[i]
+                rungs = rules.rungs(Characters.query())[i]
                 if auction.name in kwargs:
                     old = self.bids_paid[i]
                     try:

@@ -1,5 +1,5 @@
 from google.appengine.api import memcache
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.api import users
 import logging, random
 
@@ -9,7 +9,7 @@ import rules
 STATES = ['addPlayers', 'nameAndRelations', 'attributes', 'powers', 'finalTouches', 'play']
 AUCTIONS = [i.name for i in rules.auctions]
 
-class Settings(db.Model):
+class Settings(ndb.Model):
     """
     Class to represent a thronewar itself.
 
@@ -17,15 +17,22 @@ class Settings(db.Model):
     * GMs are all set as application admins
     * There is only one throne war object
     """
-    points = db.IntegerProperty(default=0) # Base build-points given for free
-    grudges = db.IntegerProperty(default=0) # Maximum number of grudges allowed
-    favors = db.IntegerProperty(default=0) # Maximum number of favors allowed
-    state = db.StringProperty(default='addPlayers') # The current state of the throne war
-    strikes = db.ListProperty(int, default=[0]*10) # Number of strikes against each auction
-    last_update = db.DateTimeProperty(auto_now=True) # last time we got updated
+    points = ndb.IntegerProperty(default=0) # Base build-points given for free
+    grudges = ndb.IntegerProperty(default=0) # Maximum number of grudges allowed
+    favors = ndb.IntegerProperty(default=0) # Maximum number of favors allowed
+    state = ndb.StringProperty(default='addPlayers') # The current state of the throne war
+    strikes = ndb.IntegerProperty(repeated=True) # Number of strikes against each auction
+    last_update = ndb.DateTimeProperty(auto_now=True) # last time we got updated
 
     # A static variable which is the key for the single settings object
     THRONEWAR = "labordaythronewarvii"
+
+    def __init__(self, *args, **kwargs):
+        super(Settings, self).__init__(
+            *args,
+            strikes=[0]*len(rules.auctions),
+            **kwargs
+        )
 
     @staticmethod
     def find(key=THRONEWAR):

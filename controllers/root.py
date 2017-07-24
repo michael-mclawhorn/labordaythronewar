@@ -21,7 +21,7 @@ class Root(ajax.AJAX):
         settings = models.Settings.find()
         response.update(settings.read())
         # The key/email/name for other characters
-        characters = models.Characters.all()
+        characters = models.Characters.query()
         response.update(characters=models.Characters.read_all(user=user, is_gm=is_gm))
         # Add rankings for the auctions
         (ranked, spent) = rules.rankings(settings, characters)
@@ -44,7 +44,7 @@ class Root(ajax.AJAX):
             # The make sure the right players exist
             if 'characters' in data and len(data['characters']) > 0:
                 emails = [d['email'] for d in data['characters']]
-                for character in models.Characters.all():
+                for character in models.Characters.query():
                     if character.email() not in emails:
                         character.delete()
                     else:
@@ -57,7 +57,7 @@ class Root(ajax.AJAX):
             message = models.Settings.find().read()
             # And the ranks in case we switched to one of those modes
             settings.last_update = datetime.datetime.now()
-            (ranked, spent) = rules.rankings(settings, models.Characters.all())
+            (ranked, spent) = rules.rankings(settings, models.Characters.query())
             message.update(rankings=ranked, spent=spent)
             for token in broadcast.get():
                 (user, expires) = token
