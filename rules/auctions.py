@@ -1,3 +1,5 @@
+import logging
+
 class Auction:
     def __init__(self, name, min, max):
         self.name = name
@@ -166,6 +168,28 @@ class Power(Auction):
     def virtuals(self, maxbid):
         return filter(lambda x: x > maxbid, [self.basic, self.advanced])
 
+class MysteryBox(Auction):
+    def __init__(self, name, advanced, basic):
+        Auction.__init__(self, name, min=10, max=advanced)
+        self.advanced = advanced
+        self.basic = basic
+
+    def reward(self, rungs, points):
+        return "Yes" if rungs.index(points) == 0 and points > 0 else "No"
+
+    def reward_name(self):
+        return "Winner"
+
+    def next_round(self, characters, index):
+        old_winner = max([character.bids_paid[index] for character in characters])
+        winner = max([character.bids_pending[index] for character in characters])
+        for character in characters:
+            if character.bids_pending[index] != winner:
+                character.bids_pending[index] = 0
+                character.bids_paid[index] = 0
+
+        return winner > old_winner
+
 
 """
     This is the actual useful thing, indexed by the name of the auction item that controls how everything works
@@ -179,6 +203,8 @@ auctions = [
     Power('pattern', 60, 40),
     Power('shapeshifting', 52, 28),
     Power('trump', 48, 32),
+    MysteryBox('stuff', 150, 10),
+    MysteryBox('timing', 150, 10),
     Power('conjuration', 150, 10),
     Power('power_words', 150, 10),
 ]

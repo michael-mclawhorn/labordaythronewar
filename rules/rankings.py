@@ -1,7 +1,8 @@
 from operator import itemgetter
 from itertools import izip, count
-import Auctions
 import logging
+
+from auctions import auctions
 
 def getIndexOfTuple(l, index, value):
     for pos,t in enumerate(l):
@@ -18,7 +19,6 @@ def rungs(characters=None):
 def rankings(settings, characters=None):
     bids_by_character = [character.bids_paid for character in characters]
     bids_by_auction = zip(*bids_by_character)
-    auctions = Auctions.auctions
     last_update = settings.last_update
     names = [character.name for character in characters]
     spent = sorted([{'name': name, 'spent': sum(bids), 'updated': char.last_update > last_update} for (char, name, bids) in zip(characters, names, bids_by_character)], key=itemgetter('spent'), reverse=True)

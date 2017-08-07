@@ -2,19 +2,19 @@
 <html>
 <head>
 <!--    <meta name="viewport" content="user-scalable=no, width=device-width" /> -->
-  <link rel="stylesheet" href="css/desktop.css">
-  <link rel="stylesheet" href="css/jquery-ui.css">
-  <title>Labor Day Throne War VIII</title>
-  <script type="text/javascript" src="/_ah/channel/jsapi"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.js"></script>
-  <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
-  <script type="text/javascript" src="/js/jquery.zipper.js"></script>
-  <script type="text/javascript" src="/js/knockout-1.3pre.js"></script>
-  <script type="text/javascript" src="/js/knockout.mapping-latest.debug.js"></script>
-  <script type="text/javascript" src="/js/jquery.address.js"></script>
-  <script type="text/javascript" src="/js/knockout.address.js"></script>
-  <script type="text/javascript" src="/js/jquery.dump.js"></script>
+    <link rel="stylesheet" href="css/desktop.css">
+    <link rel="stylesheet" href="css/jquery-ui.css">
+    <title>Labor Day Throne War VIII</title>
+    <script type="text/javascript" src="/_ah/channel/jsapi"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.js"></script>
+    <script type="text/javascript" src="/js/jquery.tmpl.js"></script>
+    <script type="text/javascript" src="/js/jquery.zipper.js"></script>
+    <script type="text/javascript" src="/js/knockout-1.3pre.js"></script>
+    <script type="text/javascript" src="/js/knockout.mapping-latest.debug.js"></script>
+    <script type="text/javascript" src="/js/jquery.address.js"></script>
+    <script type="text/javascript" src="/js/knockout.address.js"></script>
+    <script type="text/javascript" src="/js/jquery.dump.js"></script>
 </head>
 <body>
 
@@ -26,6 +26,7 @@
             name: '', grudges: 0, favors: 0,
             endurance: 0, endurance_paid: 0, psyche: 0, psyche_paid: 0, strength: 0, strength_paid: 0, warfare: 0, warfare_paid: 0,
             logrus: 0, logrus_paid: 0, pattern: 0, pattern_paid: 0, shapeshifting: 0, shapeshifting_paid: 0, trump: 0, trump_paid: 0,
+            stuff: 0, stuff_paid: 0, timing: 0, timing_paid: 0,
             power_words: 0, power_words_paid: 0, conjuration: 0, conjuration_paid: 0,
             questions: [{ question: "What is your quest?", answer: "To seek the grail!" }],
         }, {}, this);
@@ -46,8 +47,9 @@
             if ( this.endurance ) {
                 var attrs = parseInt(this.endurance()) + parseInt(this.psyche()) + parseInt(this.strength()) + parseInt(this.warfare());
                 var majors = parseInt(this.logrus()) + parseInt(this.pattern()) + parseInt(this.shapeshifting()) + parseInt(this.trump());
+                var mysteries = parseInt(this.stuff()) + parseInt(this.timing());
                 var minors = parseInt(this.power_words()) + parseInt(this.conjuration());
-                return attrs + majors + minors;
+                return attrs + majors + mysteries + minors;
             } else {
                 return 0;
             }
@@ -243,7 +245,7 @@
 <button data-bind="click: function() { $('div#dashboard').dialog('open'); }">Dashboard</button>
 <span data-bind="visible: (is_gm() && characters().length > 0)">
     <select data-bind="options: characters, optionsText: 'email', optionsValue: 'email', value: email"></select>
-    <button data-bind="visible: (state() == 'attributes' || state() == 'powers'), click: nextRound">Next Round</button>
+    <button data-bind="visible: (state() == 'attributes' || state() == 'powers' || state() == 'mystery'), click: nextRound">Next Round</button>
 </span>
 <span data-bind="visible: (state() == 'finalTouches')">
     <select data-bind="options: pages, value: panel"></select>
@@ -305,15 +307,17 @@ two other players to have a grudge against you and you will have a grudge agains
 </script>
 
 <!-- Auctions -->
-<div data-bind="visible: (state() == 'attributes' || state() == 'powers')">
+<div data-bind="visible: (state() == 'attributes' || state() == 'powers' || state() == 'mystery')">
 <table class="auctions">
     <tr class="bids" data-bind="visible: (state() == 'attributes'), template: { name: 'attributesBidTemplate', foreach: myself }"></tr>
     <tr class="bids" data-bind="visible: (state() == 'powers'), template: { name: 'powersBidTemplate', foreach: myself }"></tr>
+    <tr class="bids" data-bind="visible: (state() == 'mystery'), template: { name: 'mysteryBidTemplate', foreach: myself}"></tr>
     <tr><td></td><td></td><td></td><td></td><td class="pad" rowspan=4><table>
         <thead><tr><th colspan=2>Points Spent</th></tr></thead>
         <tbody data-bind="template: { name: 'spentTemplate', foreach: spent }"></tbody>
     </table></td></tr>
-    <tr class="powers" data-bind="visible: (state() == 'powers'), template: { name: 'powersRankingTemplate', foreach: rankings }"></tr>
+    <tr class="mystery" data-bind="visible: (state() == 'mystery'), template: { name: 'mysteryRankingTemplate', foreach: rankings }"></tr>
+    <tr class="powers" data-bind="visible: (state() != 'attributes'), template: { name: 'powersRankingTemplate', foreach: rankings }"></tr>
     <tr data-bind="template: { name: 'attributesRankingTemplate', foreach: rankings }"></tr>
 </table>
 </div>
@@ -337,6 +341,13 @@ two other players to have a grudge against you and you will have a grudge agains
     <td>Trump: <input type="number" size="4" data-bind="attr: { min: trump_paid }, value: trump" /></td>
     <td><button data-bind="click: save">Bid <span data-bind="text: spent"></span> pts</button></td>
 </script>
+<script type="text/html" id="mysteryBidTemplate">
+    <td>Stuff: <input type="number" size="4" data-bind="attr: { min: stuff_paid }, value: stuff" /></td>
+    <td>Timing: <input type="number" size="4" data-bind="attr: { min: timing_paid }, value: timing" /></td>
+    <td></td>
+    <td></td>
+    <td><button data-bind="click: save">Bid <span data-bind="text: spent"></span> pts</button></td>
+</script>
 <script type="text/html" id="attributesRankingTemplate">
     <td data-bind="visible: (['endurance', 'psyche', 'strength', 'warfare'].indexOf(name()) != -1)">
         <table>
@@ -350,6 +361,17 @@ two other players to have a grudge against you and you will have a grudge agains
 </script>
 <script type="text/html" id="powersRankingTemplate">
     <td data-bind="visible: (['logrus', 'pattern', 'shapeshifting', 'trump'].indexOf(name()) != -1)">
+        <table>
+            <thead><tr data-bind="css: { closed: (strikes() >= 3), danger: (strikes()==2), warning: (strikes()==1), open: (strikes()==0) }">
+                <th colspan="2" data-bind="text: name().charAt(0).toUpperCase()+name().slice(1)"></th>
+                <th>Pts</th><th data-bind="text: reward"></th>
+            </tr></thead>
+            <tbody data-bind="template: { name: 'rankingListTemplate', foreach: ranks }"></tbody>
+        </table>
+    </td>
+</script>
+<script type="text/html" id="mysteryRankingTemplate">
+    <td data-bind="visible: (['stuff', 'timing', '', ''].indexOf(name()) != -1)">
         <table>
             <thead><tr data-bind="css: { closed: (strikes() >= 3), danger: (strikes()==2), warning: (strikes()==1), open: (strikes()==0) }">
                 <th colspan="2" data-bind="text: name().charAt(0).toUpperCase()+name().slice(1)"></th>
@@ -439,6 +461,7 @@ Coming soon...
 </script>
 <div data-bind="visible: (state() == 'finalTouches' && panel() == 'Buyups')">
 <table class="auctions">
+    <tr class="powers" data-bind="template: { name: 'mysteryRankingTemplate', foreach: rankings }"></tr>
     <tr class="bids" data-bind="template: { name: 'powersBidTemplate', foreach: myself }"></tr>
     <tr><td colspan=5</td><td class="pad" rowspan=4><table>
         <thead><tr><th colspan=2>Points Spent</th></tr></thead>
@@ -526,7 +549,7 @@ Coming soon...
 <div>
 <h3>DEBUG</h3>
 <pre>
-<span data-bind="text: $.dump(ko.mapping.toJS(viewModel.myself))"></span>
+<span data-bind="text: $.dump(ko.mapping.toJS(viewModel))"></span>
 </pre>
 </div>
 <!-- -->

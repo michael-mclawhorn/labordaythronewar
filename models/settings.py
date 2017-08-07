@@ -1,4 +1,3 @@
-from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.api import users
 import logging, random
@@ -6,7 +5,7 @@ import logging, random
 import rules
 
 # Static properties
-STATES = ['addPlayers', 'nameAndRelations', 'attributes', 'powers', 'finalTouches', 'play']
+STATES = ['addPlayers', 'nameAndRelations', 'attributes', 'powers', 'mystery', 'finalTouches', 'play']
 AUCTIONS = [i.name for i in rules.auctions]
 
 class Settings(db.Model):
@@ -21,7 +20,7 @@ class Settings(db.Model):
     grudges = db.IntegerProperty(default=0) # Maximum number of grudges allowed
     favors = db.IntegerProperty(default=0) # Maximum number of favors allowed
     state = db.StringProperty(default='addPlayers') # The current state of the throne war
-    strikes = db.ListProperty(int, default=[0]*10) # Number of strikes against each auction
+    strikes = db.ListProperty(int, default=[0]*len(rules.auctions)) # Number of strikes against each auction
     last_update = db.DateTimeProperty(auto_now=True) # last time we got updated
 
     # A static variable which is the key for the single settings object
@@ -40,6 +39,8 @@ class Settings(db.Model):
             return ['endurance', 'psyche', 'strength', 'warfare']
         elif self.state == 'powers':
             return ['logrus', 'pattern', 'shapeshifting', 'trump']
+        elif self.state == 'mystery':
+            return ['stuff', 'timing', '', '']
 
     def read(self, user=None, is_gm=False):
         reply = {

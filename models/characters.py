@@ -21,11 +21,11 @@ class Characters(db.Model):
     name = db.StringProperty() # The character's name
     grudges = db.IntegerProperty(default=0) # How many grudges they took
     favors = db.IntegerProperty(default=0) # How many favors they took
-    questions = db.StringListProperty(default=['', '', '', '']) # Character questions answers
+    questions = db.StringListProperty(default=['']*len(QUESTIONS)) # Character questions answers
 
     # Bids
-    bids_paid = db.ListProperty(int, default=[0]*10) # Comitted to these bids
-    bids_pending = db.ListProperty(int, default=[0]*10) # These are what they are bidding now
+    bids_paid = db.ListProperty(int, default=[0]*len(rules.auctions)) # Comitted to these bids
+    bids_pending = db.ListProperty(int, default=[0]*len(rules.auctions)) # These are what they are bidding now
 
     # GM-only properties
     approved = db.UserProperty() # Which gm approved this character
@@ -123,6 +123,30 @@ class Characters(db.Model):
                                 #raise Exception("invalid bid of %s on %s" % (new, auction.name))
                         except ValueError:
                             pass
+        elif state == 'mystery':
+            bidding = settings.bidding()
+            new = {}
+            valid = []
+            bidded = []
+            for i, auction in enumerate(rules.auctions):
+                if auction.name in bidding:
+                    old = self.bids_paid[i]
+                    try:
+                        new[auction.name] = int(kwargs[auction.name])
+                        rungs = rules.rungs(Characters.all())[i]
+                        valid.append(auction.valid(rungs, old, new[auction.name]))
+                        bidded.append(new[auction.name] > 0)
+                    except ValueError:
+                        return True
+
+            # To be legal bids, all mystery boxes must be valid bids and
+            # only one may be non-zero.
+            one_bid = iter(bidded)
+            if all(valid) and (not any(bidded) or (any(one_bid) and not any(one_bid))):
+                for i, auction in enumerate(rules.auctions):
+                    if auction.name in new:
+                        self.bids_pending[i] = new[auction.name]
+                        dirty = True
         elif state == 'finalTouches':
             maxBuyup = 0
             valid = True
