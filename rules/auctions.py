@@ -46,10 +46,7 @@ class Attribute(Auction):
     def __init__(self, name):
         Auction.__init__(self, name, min=0, max=30)
 
-class Endurance(Attribute):
-    def __init__(self):
-        Attribute.__init__(self, 'endurance')
-
+class TokenAttribute(Attribute):
     def reward(self, rungs, points):
         ranks = len(rungs)
         rank = rungs.index(points)+1
@@ -195,10 +192,10 @@ class MysteryBox(Auction):
     This is the actual useful thing, indexed by the name of the auction item that controls how everything works
 """
 auctions = [
-    Endurance(),
+    TokenAttribute('endurance'),
     Psyche(),
     Strength(),
-    Attribute('warfare'),
+    TokenAttribute('warfare'),
     Power('logrus', 56, 36),
     Power('pattern', 60, 40),
     Power('shapeshifting', 52, 28),
