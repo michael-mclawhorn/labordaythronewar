@@ -9,7 +9,7 @@ QUESTIONS = [
     "The first time you walked the Pattern, where did you have it send you? Why?",
     "Describe the circumstances under which your actions resulted in someone's death. If there are many deaths, pick a particularly memorable one. Do you regret it?",
     "Why do you wish to rule Amber? (``I don't,`` or any of its variations, is not an acceptable answer.)",
-    "The game begins with everyone pulling their daggers out of a dead Oberon. All the siblings murdered him together, including you. Why did you help? Did you hate Dad? Were you simply power-hungry? Were you coerced?",
+    "Where were you during the rebellion against Oberon? How would you characterize the defenders of Amber during that conflict? Do you regret your actions (or inactions) now?",
 ]
 
 class Characters(db.Model):
