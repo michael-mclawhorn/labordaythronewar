@@ -403,6 +403,42 @@ two other players to have a grudge against you and you will have a grudge agains
 <!-- Post-auction character finalization -->
 <div data-bind="visible: (state() == 'finalTouches' && panel() == 'Sheet')">
 Coming soon...
+1.2.3
+    <h3>Items</h3>
+    <span data-bind="text: viewModel.itemsCost()"></span> points spent in items
+    <ul data-bind="template: { name: 'viewItemsTemplate', foreach: currentItems }"></ul>
+qwerty 8
+<script type="text/html" id="viewItemsTemplate">
+
+    <li><span>Name:</span><span  data-bind="text: name" />: <span  data-bind="text: description" /></li>
+    <li><span>Stats:</span> <span data-bind="text: vitality"></span> <span data-bind="text: (vitality == vitality)"></span>:<span data-bind="text: (vitality == 0)"></span>:<span data-bind="text: (vitality == '0')"></span></li>
+    <li class="3" data-bind="visible: (vitality == 0)"><label>Vitality:</label><select disabled="true" data-bind="value: vitality">
+        <option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
+    <li><label>Aggression:</label><select data-bind="value: aggression">
+        <option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
+    <li><label>Intelligence:</label><select data-bind="value: intelligence">
+        <option value="0">None</option><option value="1">Human</option><option value="2">Chaos</option><option value="4">Amber</option></select></li>
+    <li><label>Movement:</label><select data-bind="value: movement">
+        <option value="0">None</option><option value="1">Mobile</option><option value="2">Powered</option><option value="4">Turbocharged</option></select></li>
+    <li><label>Psychic Sensitivity:</label><select data-bind="value: psychic_sensitivity">
+        <option value="0">None</option><option value="1">Sensitive</option><option value="2">Empathic</option><option value="4">Telepathic</option></select></li>
+    <li><label>Psychic Defense:</label><select data-bind="value: psychic_defense">
+        <option value="0">None</option><option value="1">Hidden</option><option value="2">Masked</option><option value="4">Barbed</option></select></li>
+    <li><label>Shadow Movement:</label><select data-bind="value: shadow_movement">
+        <option value="0">None</option><option value="1">Shadow Trail</option><option value="2">Shadow Path</option><option value="4">Shadow Seek</option></select></li>
+    <li><label>Shadow Control:</label><select data-bind="value: shadow_control">
+        <option value="0">None</option><option value="1">Mold Shadow Stuff</option><option value="2">Mold Shadow Creatures</option><option value="4">Mold Shadow Reality</option></select></li>
+    <li><label>Shape Shifting:</label><select data-bind="value: shapeshifting">
+        <option value="0">None</option><option value="1">Mundane Shape</option><option value="2">Transitional Shape</option><option value="4">Empowered Shape</option></select></li>
+    <li><label>Trump Images:</label><select data-bind="value: trump_images">
+        <option value="0">None</option><option value="1">Contains Trump Image</option><option value="2">Contains Named-&-Numbered Trump Images</option><option value="4">Trump Powered</option></select></li>
+    <li><label>Power Words:</label><select data-bind="value: power_words">
+        <option value="0">None</option><option value="1">Contains Power Word</option><option value="2">Contains Named-&-Numbered Power Words</option></select></li>
+    <li><label>Quantity Multiplier:</label><select data-bind="value: quantity">
+        <option value="0">Instant Conjuration</option><option value="1">Unique</option><option value="2">Named-and-Numbered</option><option value="3">Horde</option></select></li>
+
+</script>
+
 </div>
 
 <div data-bind="visible: (state() == 'finalTouches' && panel() == 'Toys')">
